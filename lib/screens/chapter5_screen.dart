@@ -6,7 +6,9 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
+import 'package:horizon_protocol/screens/module_transition_screen.dart';
 import 'package:horizon_protocol/screens/chapter6_screen.dart';
+import 'package:horizon_protocol/widgets/dev_nav.dart';
 
 class Chapter5Screen extends StatefulWidget {
   const Chapter5Screen({super.key});
@@ -152,7 +154,15 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
                     Navigator.of(context).pop();
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const Chapter6Screen()),
+                      MaterialPageRoute(
+                        builder: (context) => ModuleTransitionScreen(
+                          moduleTitle: "MODÜL 2",
+                          moduleSubtitle: "SESSİZ ÇIĞLIK",
+                          objective: "Yüksek stres altında karar verme hızı ve duygusal dayanıklılık analizi.",
+                          icon: Icons.graphic_eq_outlined,
+                          nextScreen: const Chapter6Screen(),
+                        ),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: color.withOpacity(0.2), side: BorderSide(color: color)),

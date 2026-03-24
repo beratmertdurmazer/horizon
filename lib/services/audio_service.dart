@@ -231,8 +231,37 @@ class AudioService {
     } catch (e) {}
   }
 
+  web.OscillatorNode? _melancholicOsc;
+  web.GainNode? _melancholicGain;
+
+  /// Hüzünlü ve derin atmosfer sesi (Melancholic Ambient)
+  void playMelancholicAmbient() {
+    try {
+      if (_melancholicOsc != null) return;
+      final ctx = _getContext();
+      _melancholicOsc = ctx.createOscillator();
+      _melancholicGain = ctx.createGain();
+      
+      _melancholicOsc!.type = 'sine';
+      _melancholicOsc!.frequency.value = 55; // Low bass
+      _melancholicGain!.gain.value = 0.05;
+      
+      _melancholicOsc!.connect(_melancholicGain!);
+      _melancholicGain!.connect(ctx.destination);
+      _melancholicOsc!.start();
+    } catch (e) {}
+  }
+
+  void stopMelancholic() {
+    try { 
+      _melancholicOsc?.stop(); 
+      _melancholicOsc = null; 
+    } catch (e) {}
+  }
+
   void stopAll() {
     try { _ambientOsc?.stop(); _ambientOsc = null; } catch (e) {}
     try { _sirenOsc?.stop(); _sirenOsc = null; } catch (e) {}
+    try { _melancholicOsc?.stop(); _melancholicOsc = null; } catch (e) {}
   }
 }

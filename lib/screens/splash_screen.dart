@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'package:horizon_protocol/core/app_theme.dart';
-import 'package:horizon_protocol/screens/narrative_screen.dart';
+import 'package:horizon_protocol/screens/intro_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Timer(const Duration(seconds: 4), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => NarrativeScreen()),
+          MaterialPageRoute(builder: (_) => const IntroScreen()),
         );
       }
     });

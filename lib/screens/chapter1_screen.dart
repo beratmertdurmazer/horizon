@@ -6,6 +6,8 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/screens/chapter2_screen.dart';
+import 'package:horizon_protocol/screens/chapter2_screen.dart';
+import 'package:horizon_protocol/screens/module_transition_screen.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 
 class Chapter1Screen extends StatefulWidget {
@@ -181,7 +183,7 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
               ),
             ),
           ),
-          const DevNav(),
+          DevNav(),
           if (_stopwatch.isRunning && (progress > 0.6 || _errorCount > 1))
             IgnorePointer(child: Container(decoration: BoxDecoration(gradient: RadialGradient(colors: [Colors.transparent, Colors.red.withOpacity(0.25 + (stressPulse * 0.35))], stops: const [0.4, 1.0])))),
         ],

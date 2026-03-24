@@ -29,7 +29,7 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
   Timer? _typewriterTimer;
   Timer? _glitchTimer;
   Timer? _hiddenCountdownTimer;
-  int _hiddenSecondsRemaining = 60;
+  int _hiddenSecondsRemaining = 120;
   String _glitchedEnergyText = "ENERJİ KRİTİK (%12)";
 
   @override
@@ -205,11 +205,11 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
                     children: [
-                      _buildHeader(),
-                      const SizedBox(height: 20),
-                      _buildNarrativeWindow(),
-                      const SizedBox(height: 40),
                       if (!_isTransitioning) ...[
+                        _buildHeader(),
+                        const SizedBox(height: 20),
+                        _buildNarrativeWindow(),
+                        const SizedBox(height: 40),
                         _buildChoiceCard(EnergyArea.labs, "LABORATUVARLAR", "AR-GE & İNOVASYON", Icons.biotech, AppTheme.neonCyan),
                         const SizedBox(height: 16),
                         _buildChoiceCard(EnergyArea.quarters, "MÜRETTEBAT YATAKHANESİ", "ÇALIŞAN REFAHI & MUTLULUK", Icons.hotel, Colors.orange),

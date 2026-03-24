@@ -9,6 +9,8 @@ import 'package:horizon_protocol/screens/chapter6_screen.dart';
 import 'package:horizon_protocol/screens/chapter7_screen.dart';
 import 'package:horizon_protocol/screens/chapter8_screen.dart';
 import 'package:horizon_protocol/screens/chapter9_screen.dart';
+import 'package:horizon_protocol/screens/chapter10_screen.dart';
+import 'package:horizon_protocol/screens/intro_screen.dart';
 
 class DevNav extends StatefulWidget {
   const DevNav({super.key});
@@ -29,6 +31,8 @@ class _DevNavState extends State<DevNav> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (_isExpanded) ...[
+            _buildNavButton("INTRO", const IntroScreen()),
+            const SizedBox(height: 8),
             _buildNavButton("C1", const Chapter1Screen()),
             const SizedBox(height: 8),
             _buildNavButton("C2", const Chapter2Screen()),
@@ -46,6 +50,8 @@ class _DevNavState extends State<DevNav> {
             _buildNavButton("C8", const Chapter8Screen()), 
             const SizedBox(height: 8),
             _buildNavButton("C9", const Chapter9Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C10", const Chapter10Screen()), 
             const SizedBox(height: 12),
           ],
           FloatingActionButton.small(

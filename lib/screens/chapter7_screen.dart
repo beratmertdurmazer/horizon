@@ -6,7 +6,8 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
-import 'package:horizon_protocol/screens/chapter8_screen.dart'; // Future import
+import 'package:horizon_protocol/screens/chapter8_screen.dart';
+import 'package:horizon_protocol/screens/chapter9_screen.dart';
 
 class Chapter7Screen extends StatefulWidget {
   const Chapter7Screen({super.key});
@@ -131,10 +132,16 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                   Navigator.of(context).pop();
-                   // Navigate to next (to be created)
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Chapter8Screen()),
+                  );
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: (success ? AppTheme.neonCyan : Colors.red).withOpacity(0.2), side: BorderSide(color: success ? AppTheme.neonCyan : Colors.red)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: (success ? AppTheme.neonCyan : Colors.red).withOpacity(0.2), 
+                  side: BorderSide(color: success ? AppTheme.neonCyan : Colors.red)
+                ),
                 child: Text("DEVAM ET", style: GoogleFonts.rajdhani(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ],
