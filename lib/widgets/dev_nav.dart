@@ -3,6 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:horizon_protocol/screens/chapter1_screen.dart';
 import 'package:horizon_protocol/screens/chapter2_screen.dart';
 import 'package:horizon_protocol/screens/chapter3_screen.dart';
+import 'package:horizon_protocol/screens/chapter4_screen.dart';
+import 'package:horizon_protocol/screens/chapter5_screen.dart';
+import 'package:horizon_protocol/screens/chapter6_screen.dart';
+import 'package:horizon_protocol/screens/chapter7_screen.dart';
+import 'package:horizon_protocol/screens/chapter8_screen.dart';
+import 'package:horizon_protocol/screens/chapter9_screen.dart';
 
 class DevNav extends StatefulWidget {
   const DevNav({super.key});
@@ -29,8 +35,17 @@ class _DevNavState extends State<DevNav> {
             const SizedBox(height: 8),
             _buildNavButton("C3", const Chapter3Screen()),
             const SizedBox(height: 8),
-            // Gelecek bölümler için placeholder
-            _buildNavButton("C4", null), 
+            _buildNavButton("C4", const Chapter4Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C5", const Chapter5Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C6", const Chapter6Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C7", const Chapter7Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C8", const Chapter8Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C9", const Chapter9Screen()), 
             const SizedBox(height: 12),
           ],
           FloatingActionButton.small(

@@ -63,20 +63,21 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
     final top = 50.0 + random.nextDouble() * (MediaQuery.of(context).size.height - 300);
     final left = 20.0 + random.nextDouble() * (MediaQuery.of(context).size.width - 250);
 
+    final key = UniqueKey();
     setState(() {
       _popups.add(
         Positioned(
           top: top,
           left: left,
-          key: UniqueKey(),
-          child: _buildDistractionPopup(type),
+          key: key,
+          child: _buildDistractionPopup(type, key),
         ),
       );
       AudioService().playGlitchSound(); // Notif sesi niyetine
     });
   }
 
-  Widget _buildDistractionPopup(int type) {
+  Widget _buildDistractionPopup(int type, Key key) {
     String title = "";
     String content = "";
     Color color = AppTheme.neonCyan;
@@ -102,7 +103,7 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
     return GestureDetector(
       onTap: () {
         setState(() => _distractionClicks++);
-        _removePopup(title);
+        _removePopup(key);
       },
       child: Container(
         width: 240,
@@ -144,10 +145,9 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
     );
   }
 
-  void _removePopup(String title) {
+  void _removePopup(Key key) {
     setState(() {
-      _popups.removeWhere((p) => (p.key as UniqueKey).toString().contains(title) == false); // Basitçe kaldır
-      if (_popups.isNotEmpty) _popups.removeAt(0); // Garanti çözüm
+      _popups.removeWhere((p) => p.key == key);
     });
   }
 
