@@ -6,6 +6,7 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/screens/chapter3_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 
 class Chapter2Screen extends StatefulWidget {
@@ -167,7 +168,11 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
 
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Chapter3Screen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+          completedChapterTitle: "Bölüm 2: İlk TriaJ",
+          nextChapterHint: "Triage tamamlandı. Reaktör sinapslarını onar.",
+          nextScreen: Chapter3Screen(),
+        )));
       }
     });
   }

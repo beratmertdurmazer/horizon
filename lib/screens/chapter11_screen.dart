@@ -6,6 +6,7 @@ import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 import 'chapter12_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 
 class Chapter11Screen extends StatefulWidget {
   const Chapter11Screen({super.key});
@@ -103,7 +104,11 @@ class _Chapter11ScreenState extends State<Chapter11Screen> with TickerProviderSt
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Chapter12Screen()),
+          MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+            completedChapterTitle: "Bölüm 11: İlk Tartışma",
+            nextChapterHint: "Liderlik yaklaşımın kaydedildi. Yangın alarmı.",
+            nextScreen: Chapter12Screen(),
+          )),
         );
       }
     });

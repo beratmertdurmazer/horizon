@@ -7,6 +7,7 @@ import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 import 'chapter5_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 
 enum EnergyArea { labs, quarters, greenhouse }
 
@@ -163,7 +164,11 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Chapter5Screen()),
+          MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+            completedChapterTitle: "Bölüm 4: Karanlık Koridorlar",
+            nextChapterHint: "Etik kararın kaydedildi. Son saniyeler yaklaşıyor.",
+            nextScreen: Chapter5Screen(),
+          )),
         );
       }
     });

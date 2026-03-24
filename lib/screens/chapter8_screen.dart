@@ -7,6 +7,7 @@ import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 import 'package:horizon_protocol/screens/chapter9_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 
 class Chapter8Screen extends StatefulWidget {
   const Chapter8Screen({super.key});
@@ -144,7 +145,11 @@ class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStat
                   Navigator.of(context).pop();
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const Chapter9Screen()),
+                    MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+                      completedChapterTitle: "Bölüm 8: Dış Gövde Çatlağı",
+                      nextChapterHint: "Basınç stabilize edildi. Son analiz bekleniyor.",
+                      nextScreen: Chapter9Screen(),
+                    )),
                   );
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: color.withOpacity(0.2), side: BorderSide(color: color)),

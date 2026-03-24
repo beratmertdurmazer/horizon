@@ -6,7 +6,7 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/screens/chapter2_screen.dart';
-import 'package:horizon_protocol/screens/chapter2_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 import 'package:horizon_protocol/screens/module_transition_screen.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 
@@ -136,7 +136,11 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
       totalTimeMs: decisionTime,
     );
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Chapter2Screen()));
+      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+        completedChapterTitle: "Bölüm 1: Soğuk Uyanış",
+        nextChapterHint: "Sinapslar hizalandı. Sıradaki test: kaynak yönetimi.",
+        nextScreen: Chapter2Screen(),
+      )));
     });
   }
 

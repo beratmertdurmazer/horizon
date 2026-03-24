@@ -7,6 +7,7 @@ import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 import 'package:horizon_protocol/screens/chapter8_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 import 'package:horizon_protocol/screens/chapter9_screen.dart';
 
 class Chapter7Screen extends StatefulWidget {
@@ -149,7 +150,11 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
                   Navigator.of(context).pop();
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const Chapter8Screen()),
+                    MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+                      completedChapterTitle: "Bölüm 7: Sistemsel Çöküş",
+                      nextChapterHint: "Terminal erişimi tamamlandı. Gövde bütünlüğü tehlikede.",
+                      nextScreen: Chapter8Screen(),
+                    )),
                   );
                 },
                 style: ElevatedButton.styleFrom(

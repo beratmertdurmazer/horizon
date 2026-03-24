@@ -6,6 +6,7 @@ import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 import 'chapter13_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 
 class Chapter12Screen extends StatefulWidget {
   const Chapter12Screen({super.key});
@@ -95,7 +96,11 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Chapter13Screen()),
+          MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+            completedChapterTitle: "Bölüm 12: Partnerin Hatası",
+            nextChapterHint: "Kararın kayıt altına alındı. Son görev: güven testi.",
+            nextScreen: Chapter13Screen(),
+          )),
         );
       }
     });

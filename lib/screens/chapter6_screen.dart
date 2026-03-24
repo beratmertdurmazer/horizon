@@ -7,6 +7,7 @@ import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
 import 'package:horizon_protocol/screens/chapter7_screen.dart';
+import 'package:horizon_protocol/screens/chapter_breather_screen.dart';
 
 class Chapter6Screen extends StatefulWidget {
   const Chapter6Screen({super.key});
@@ -66,7 +67,11 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Chapter7Screen()),
+          MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(
+            completedChapterTitle: "Bölüm 6: Alarm Yorgunluğu",
+            nextChapterHint: "Alarm yanıtın analiz edildi. Sistemsel çöküş başlıyor.",
+            nextScreen: Chapter7Screen(),
+          )),
         );
       }
     });
