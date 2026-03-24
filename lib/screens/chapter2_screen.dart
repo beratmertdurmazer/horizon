@@ -6,6 +6,7 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/screens/chapter3_screen.dart';
+import 'package:horizon_protocol/widgets/dev_nav.dart';
 
 class Chapter2Screen extends StatefulWidget {
   const Chapter2Screen({super.key});
@@ -17,14 +18,20 @@ class Chapter2Screen extends StatefulWidget {
 enum TriageSystem { reactor, oxygen, comms, none }
 
 class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStateMixin {
+  // Sistem Durumları (0.0 - 1.0)
   double _reactorHealth = 0.6;
   double _oxygenLevel = 0.5;
   double _commsSignal = 0.4;
+  
   TriageSystem _focusedSystem = TriageSystem.none;
   bool _isCompleted = false;
-  late Stopwatch _stopwatch;
+  
+  // Geri Sayım Süresi (20 Saniye)
+  double _timeLeft = 20.0;
   Timer? _tickTimer;
   Timer? _heartbeatTimer;
+
+  // PersonaMR Bilgileri
   TriageSystem? _firstPriority;
   Map<TriageSystem, double> _timeSpent = {
     TriageSystem.reactor: 0,
@@ -40,10 +47,10 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()..start();
     _pulseController = AnimationController(duration: const Duration(seconds: 2), vsync: this)..repeat(reverse: true);
     _stressController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this)..repeat(reverse: true);
     _glitchController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
+
     _startTicking();
     _startHeartbeat();
   }
@@ -51,12 +58,23 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
   void _startTicking() {
     _tickTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (_isCompleted) return;
+
       setState(() {
-        double decayFactor = 0.002;
-        double repairFactor = 0.008;
+        _timeLeft -= 0.05; // 50ms = 0.05s
+        
+        if (_timeLeft <= 0) {
+          _timeLeft = 0;
+          _completeTriage();
+          return;
+        }
+
+        double decayFactor = 0.0025; // Biraz daha hızlandırdım kaosu artırmak için
+        double repairFactor = 0.012; // Odaklanıldığında daha hızlı iyileşme
+
         _reactorHealth -= decayFactor;
         _oxygenLevel -= decayFactor;
         _commsSignal -= decayFactor;
+
         if (_focusedSystem != TriageSystem.none) {
           _timeSpent[_focusedSystem] = (_timeSpent[_focusedSystem] ?? 0) + 50;
           switch (_focusedSystem) {
@@ -66,11 +84,14 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
             default: break;
           }
         }
+
         _reactorHealth = _reactorHealth.clamp(0.0, 1.0);
         _oxygenLevel = _oxygenLevel.clamp(0.0, 1.0);
         _commsSignal = _commsSignal.clamp(0.0, 1.0);
-        if (_reactorHealth > 0.9 && _oxygenLevel > 0.9 && _commsSignal > 0.9) _completeTriage();
-        if (_reactorHealth <= 0 || _oxygenLevel <= 0 || _commsSignal <= 0) _triggerGlitch();
+
+        if (_reactorHealth <= 0 || _oxygenLevel <= 0 || _commsSignal <= 0) {
+           _triggerGlitch();
+        }
       });
     });
   }
@@ -78,10 +99,16 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
   void _startHeartbeat() {
     _heartbeatTimer?.cancel();
     double minHealth = math.min(_reactorHealth, math.min(_oxygenLevel, _commsSignal));
-    int bpm = (60 + (40 * (1.0 - minHealth)) + (_stopwatch.elapsed.inSeconds * 2)).clamp(60, 180).toInt();
+    // Süre azaldıkça ve can azaldıkça nabız artar
+    int bpm = (60 + (60 * (1.0 - minHealth)) + ((20 - _timeLeft) * 3)).clamp(60, 200).toInt();
+    
     _stressController.duration = Duration(milliseconds: (30000 / bpm).toInt());
+
     _heartbeatTimer = Timer(Duration(milliseconds: (60000 / bpm).toInt()), () {
-      if (!_isCompleted) { AudioService().playHeartbeat(); _startHeartbeat(); }
+      if (!_isCompleted) {
+        AudioService().playHeartbeat();
+        _startHeartbeat();
+      }
     });
   }
 
@@ -102,25 +129,34 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
   void _completeTriage() {
     if (_isCompleted) return;
     _isCompleted = true;
-    _stopwatch.stop();
     _tickTimer?.cancel();
     _heartbeatTimer?.cancel();
-    PersonaMR().logDecision(moduleId: "MOD_1", chapterId: "Bölüm 2: İlk TriaJ", choiceId: "TRIAGE_COMPLETED", durationMs: _stopwatch.elapsedMilliseconds, triggers: ["priority_${_firstPriority.toString().split('.').last}", "balance_score_${(_reactorHealth + _oxygenLevel + _commsSignal) / 3}"]);
+    
+    PersonaMR().logDecision(
+      moduleId: "MOD_1",
+      chapterId: "Bölüm 2: İlk TriaJ",
+      choiceId: "TRIAGE_TIME_UP",
+      durationMs: 20000,
+      triggers: [
+        "priority_${_firstPriority.toString().split('.').last}",
+        "final_avg_${(_reactorHealth + _oxygenLevel + _commsSignal) / 3}"
+      ],
+    );
 
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Chapter3Screen()),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Chapter3Screen()));
       }
     });
   }
 
   @override
   void dispose() {
-    _tickTimer?.cancel(); _heartbeatTimer?.cancel();
-    _pulseController.dispose(); _stressController.dispose(); _glitchController.dispose();
+    _tickTimer?.cancel();
+    _heartbeatTimer?.cancel();
+    _pulseController.dispose();
+    _stressController.dispose();
+    _glitchController.dispose();
     super.dispose();
   }
 
@@ -135,32 +171,36 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Positioned.fill(child: Container(decoration: BoxDecoration(gradient: RadialGradient(colors: [stressColor.withOpacity(0.1 + (1.0 - minHealth) * 0.2), Colors.black])))),
-          Transform.translate(
-            offset: Offset(xShift, yShift),
-            child: SafeArea(
-              child: SingleChildScrollView( // SCROLL EKLENDI
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      _buildHeader(stressColor),
-                      const SizedBox(height: 10),
-                      _buildNarrativeWindow(stressColor),
-                      const SizedBox(height: 25), // SPACER YERINE SIZEDBOX
-                      _buildPanel(title: "REAKTÖR ÇEKİRDEĞİ", subtitle: "TERMAL STABİLİZASYON GEREKLİ", value: _reactorHealth, color: Colors.orange, icon: Icons.flash_on, system: TriageSystem.reactor),
-                      const SizedBox(height: 15),
-                      _buildPanel(title: "OKSİJEN REZERVİ", subtitle: "BASINÇ SIZINTISI ALGILANDI", value: _oxygenLevel, color: Colors.cyan, icon: Icons.air, system: TriageSystem.oxygen),
-                      const SizedBox(height: 15),
-                      _buildPanel(title: "DÜNYA İLE İLETİŞİM", subtitle: "SİNYAL KAYBI: YENİDEN KAZANIM", value: _commsSignal, color: Colors.green, icon: Icons.wifi, system: TriageSystem.comms),
-                      const SizedBox(height: 25), // SPACER YERINE SIZEDBOX
-                      _buildSystemStatus(stressColor),
-                    ],
+          Positioned.fill(child: Image.asset("assets/images/chapter2_background.png", fit: BoxFit.cover, color: Colors.black.withOpacity(0.9), colorBlendMode: BlendMode.darken)),
+          Positioned.fill(child: Container(decoration: BoxDecoration(gradient: RadialGradient(colors: [stressColor.withOpacity(0.1 + (1.0 - minHealth) * 0.2), Colors.black.withOpacity(0.4)])))),
+          SizedBox.expand(
+            child: Transform.translate(
+              offset: Offset(xShift, yShift),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        _buildHeader(stressColor),
+                        const SizedBox(height: 10),
+                        _buildNarrativeWindow(stressColor),
+                        const SizedBox(height: 25),
+                        _buildPanel(title: "REAKTÖR ÇEKİRDEĞİ", subtitle: "TERMAL STABİLİZASYON GEREKLİ", value: _reactorHealth, color: Colors.orange, icon: Icons.flash_on, system: TriageSystem.reactor),
+                        const SizedBox(height: 15),
+                        _buildPanel(title: "OKSİJEN REZERVİ", subtitle: "BASINÇ SIZINTISI ALGILANDI", value: _oxygenLevel, color: Colors.cyan, icon: Icons.air, system: TriageSystem.oxygen),
+                        const SizedBox(height: 15),
+                        _buildPanel(title: "DÜNYA İLE İLETİŞİM", subtitle: "SİNYAL KAYBI: YENİDEN KAZANIM", value: _commsSignal, color: Colors.green, icon: Icons.wifi, system: TriageSystem.comms),
+                        const SizedBox(height: 25),
+                        _buildSystemStatus(stressColor),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+          const DevNav(),
           if (minHealth < 0.3) IgnorePointer(child: AnimatedBuilder(animation: _stressController, builder: (context, child) { return Container(decoration: BoxDecoration(gradient: RadialGradient(colors: [Colors.transparent, Colors.red.withOpacity(_stressController.value * 0.3)], stops: const [0.5, 1.0]))); })),
         ],
       ),
@@ -173,15 +213,22 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
       children: [
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text("BÖLÜM 2: İLK TRİAJ", style: GoogleFonts.rajdhani(color: color, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2.0)),
-          Text("DURUM: ${_isCompleted ? "STABİLİZASYON" : "KRİTİK HATA"}", style: GoogleFonts.sourceCodePro(color: color.withOpacity(0.6), fontSize: 10)),
+          Text("SİSTEM ÇÖKÜŞÜNE KALAN SÜRE", style: GoogleFonts.sourceCodePro(color: color.withOpacity(0.6), fontSize: 9)),
         ]),
-        Text("${_stopwatch.elapsed.inSeconds}s", style: GoogleFonts.sourceCodePro(color: color, fontSize: 24, fontWeight: FontWeight.bold)),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          decoration: BoxDecoration(color: Colors.black.withOpacity(0.6), border: Border.all(color: color.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)),
+          child: Text(
+            "${_timeLeft.toStringAsFixed(1)}s",
+            style: GoogleFonts.sourceCodePro(color: color, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildNarrativeWindow(Color color) {
-    return Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.black.withOpacity(0.6), border: Border.all(color: color.withOpacity(0.3)), borderRadius: BorderRadius.circular(4)), child: Text("\"Gemi ölüyor Operatör. Üç sistem de yardımın için bağırıyor. Hangisini önce eline uzatıyorsun?\"", style: GoogleFonts.inter(color: Colors.white70, fontSize: 14, fontStyle: FontStyle.italic)));
+    return Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.black.withOpacity(0.6), border: Border.all(color: color.withOpacity(0.3)), borderRadius: BorderRadius.circular(4)), child: Text("\"Gemi ölüyor Operatör. 20 saniyen var. Dengeleri sağla yoksa her şey karanlığa gömülecek.\"", style: GoogleFonts.inter(color: Colors.white70, fontSize: 14, fontStyle: FontStyle.italic)));
   }
 
   Widget _buildPanel({required String title, required String subtitle, required double value, required Color color, required IconData icon, required TriageSystem system}) {
@@ -212,9 +259,9 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
 
   Widget _buildSystemStatus(Color color) {
     return Container(padding: const EdgeInsets.symmetric(vertical: 20), child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.warning_amber, color: color, size: 16), const SizedBox(width: 8), Text("TÜM SİSTEMLERİ STABİLİZE ET (%90 ÜZERİ)", style: GoogleFonts.sourceCodePro(color: color, fontSize: 10, fontWeight: FontWeight.bold))]),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.timer, color: color, size: 16), const SizedBox(width: 8), Text("SÜRE BİTENE KADAR HAYATTA KAL", style: GoogleFonts.sourceCodePro(color: color, fontSize: 10, fontWeight: FontWeight.bold))]),
       const SizedBox(height: 10),
-      Text("ODAĞI SÜREKLİ DEĞİŞTİREREK DENGE KURUN", style: GoogleFonts.rajdhani(color: AppTheme.textSecondary.withOpacity(0.5), fontSize: 10, letterSpacing: 2.0)),
+      Text("ÖNCELİK SIRALAMASI PERSONAMR TARAFINDAN ÖLÇÜLÜYOR", style: GoogleFonts.rajdhani(color: AppTheme.textSecondary.withOpacity(0.5), fontSize: 10, letterSpacing: 2.0)),
     ]));
   }
 }

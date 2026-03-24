@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
+import 'package:horizon_protocol/widgets/dev_nav.dart';
 
 class Chapter3Screen extends StatefulWidget {
   const Chapter3Screen({super.key});
@@ -217,6 +218,8 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          // Background Concept Visual
+          Positioned.fill(child: Image.asset("assets/images/chapter3_background.png", fit: BoxFit.cover, color: Colors.black.withOpacity(0.8), colorBlendMode: BlendMode.darken)),
           // Background Reactor Core Visual
           Positioned.fill(
             child: Container(
@@ -224,29 +227,33 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
                 gradient: RadialGradient(
                   colors: [
                     Colors.red.withOpacity(0.15),
-                    Colors.black,
+                    Colors.black.withOpacity(0.4),
                   ],
                 ),
               ),
             ),
           ),
-
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 10),
-                  _buildNarrativeWindow(),
-                  const Spacer(),
-                  _buildMatchingGrid(),
-                  const Spacer(),
-                  _buildProgressStatus(),
-                ],
+          SizedBox.expand(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      _buildHeader(),
+                      const SizedBox(height: 10),
+                      _buildNarrativeWindow(),
+                      const SizedBox(height: 30),
+                      _buildMatchingGrid(),
+                      const SizedBox(height: 30),
+                      _buildProgressStatus(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
+          const DevNav(), // Geliştirici Navigasyonu
 
           // POPUPS on top
           ..._popups,

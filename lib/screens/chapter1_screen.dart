@@ -6,6 +6,7 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/screens/chapter2_screen.dart';
+import 'package:horizon_protocol/widgets/dev_nav.dart';
 
 class Chapter1Screen extends StatefulWidget {
   const Chapter1Screen({super.key});
@@ -135,35 +136,52 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Positioned.fill(child: Image.asset("images/concept_cyber_noir_cold_awakening_128391231231_1774315250438.png", fit: BoxFit.cover, color: Colors.black.withOpacity(0.85), colorBlendMode: BlendMode.darken)),
-          Transform.translate(
-            offset: Offset(xShift, yShift),
-            child: Container(
-              decoration: BoxDecoration(gradient: RadialGradient(colors: [dynamicColor.withOpacity(_pulseAnimation.value + (stressPulse * 0.25)), Colors.transparent])),
-              child: SafeArea(
-                child: SingleChildScrollView( // SCROLL EKLENDI
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildHeader(dynamicColor),
-                        const SizedBox(height: 10),
-                        _buildNarrativeWindow(dynamicColor),
-                        const SizedBox(height: 25),
-                        if (!_isTypingNarrative) ...[
-                          _buildAlphanumericSequence(dynamicColor),
-                          const SizedBox(height: 20),
-                          _buildOptionsGrid(dynamicColor), // REMOVED EXPANDED
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/concept_cyber_noir_cold_awakening_128391231231_1774315250438.png",
+              fit: BoxFit.cover,
+              color: Colors.black.withOpacity(0.88),
+              colorBlendMode: BlendMode.darken,
+            ),
+          ),
+          SizedBox.expand(
+            child: Transform.translate(
+              offset: Offset(xShift, yShift),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [
+                      dynamicColor.withOpacity(_pulseAnimation.value + (stressPulse * 0.25)),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildHeader(dynamicColor),
+                          const SizedBox(height: 10),
+                          _buildNarrativeWindow(dynamicColor),
+                          const SizedBox(height: 25),
+                          if (!_isTypingNarrative) ...[
+                            _buildAlphanumericSequence(dynamicColor),
+                            const SizedBox(height: 20),
+                            _buildOptionsGrid(dynamicColor),
+                          ],
+                          _buildFooterStatus(dynamicColor, stressPulse),
                         ],
-                        _buildFooterStatus(dynamicColor, stressPulse),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
+          const DevNav(),
           if (_stopwatch.isRunning && (progress > 0.6 || _errorCount > 1))
             IgnorePointer(child: Container(decoration: BoxDecoration(gradient: RadialGradient(colors: [Colors.transparent, Colors.red.withOpacity(0.25 + (stressPulse * 0.35))], stops: const [0.4, 1.0])))),
         ],
