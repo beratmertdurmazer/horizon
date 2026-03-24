@@ -283,6 +283,23 @@ class AudioService {
     } catch (e) {}
   }
 
+  void playVentEcho() {
+    try {
+      final ctx = _getContext();
+      final osc = ctx.createOscillator();
+      final g = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(60, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1.0);
+      g.gain.setValueAtTime(0.03, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.0);
+    } catch (e) {}
+  }
+
   void playFireCrackle() {
     try {
       final ctx = _getContext();
