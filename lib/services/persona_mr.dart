@@ -20,6 +20,10 @@ class PersonaMR {
     decisions.clear();
   }
 
+  String? _chosenPartner;
+  void setPartner(String name) => _chosenPartner = name;
+  String? getPartner() => _chosenPartner;
+
   void logDecision({
     required String moduleId,
     required String chapterId,

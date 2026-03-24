@@ -259,9 +259,66 @@ class AudioService {
     } catch (e) {}
   }
 
+  web.OscillatorNode? _frostOsc;
+  web.GainNode? _frostGain;
+
+  /// Buz kırılma sesi (Frost Crack)
+  void playFrostCrack() {
+    try {
+      final ctx = _getContext();
+      _frostOsc = ctx.createOscillator();
+      _frostGain = ctx.createGain();
+      
+      _frostOsc!.type = 'square';
+      _frostOsc!.frequency.setValueAtTime(100, ctx.currentTime);
+      _frostOsc!.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.5);
+      
+      _frostGain!.gain.setValueAtTime(0.05, ctx.currentTime);
+      _frostGain!.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+      
+      _frostOsc!.connect(_frostGain!);
+      _frostGain!.connect(ctx.destination);
+      _frostOsc!.start();
+      _frostOsc!.stop(ctx.currentTime + 0.5);
+    } catch (e) {}
+  }
+
+  void playFireCrackle() {
+    try {
+      final ctx = _getContext();
+      final osc = ctx.createOscillator();
+      final g = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(50, ctx.currentTime);
+      g.gain.setValueAtTime(0.04, ctx.currentTime);
+      // Random volume fluctuations for fire effect
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start();
+      _sirenOsc = osc; // reuse siren slot or create separate one
+    } catch (e) {}
+  }
+
+  void playTensePulse() {
+    try {
+      final ctx = _getContext();
+      final osc = ctx.createOscillator();
+      final g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(50, ctx.currentTime);
+      g.gain.setValueAtTime(0.08, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.4);
+    } catch (e) {}
+  }
+
   void stopAll() {
     try { _ambientOsc?.stop(); _ambientOsc = null; } catch (e) {}
     try { _sirenOsc?.stop(); _sirenOsc = null; } catch (e) {}
     try { _melancholicOsc?.stop(); _melancholicOsc = null; } catch (e) {}
+    try { _frostOsc?.stop(); _frostOsc = null; } catch (e) {}
   }
 }

@@ -10,6 +10,9 @@ import 'package:horizon_protocol/screens/chapter7_screen.dart';
 import 'package:horizon_protocol/screens/chapter8_screen.dart';
 import 'package:horizon_protocol/screens/chapter9_screen.dart';
 import 'package:horizon_protocol/screens/chapter10_screen.dart';
+import 'package:horizon_protocol/screens/chapter11_screen.dart';
+import 'package:horizon_protocol/screens/chapter12_screen.dart';
+import 'package:horizon_protocol/screens/chapter13_screen.dart';
 import 'package:horizon_protocol/screens/intro_screen.dart';
 
 class DevNav extends StatefulWidget {
@@ -52,6 +55,12 @@ class _DevNavState extends State<DevNav> {
             _buildNavButton("C9", const Chapter9Screen()), 
             const SizedBox(height: 8),
             _buildNavButton("C10", const Chapter10Screen()), 
+            const SizedBox(height: 8),
+            _buildNavButton("C11", const Chapter11Screen()),
+            const SizedBox(height: 8),
+            _buildNavButton("C12", const Chapter12Screen()),
+            const SizedBox(height: 8),
+            _buildNavButton("C13", const Chapter13Screen()),
             const SizedBox(height: 12),
           ],
           FloatingActionButton.small(
