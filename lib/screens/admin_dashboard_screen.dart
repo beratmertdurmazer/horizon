@@ -82,7 +82,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.database_outlined, size: 64, color: Colors.white12),
+          Icon(Icons.storage_outlined, size: 64, color: Colors.white12),
           const SizedBox(height: 20),
           Text("VERİTABANI BOŞ", style: GoogleFonts.sourceCodePro(color: Colors.white24, fontSize: 18)),
           Text("HENÜZ TAMAMLANMIŞ TEST BULUNAMADI", style: GoogleFonts.sourceCodePro(color: Colors.white10, fontSize: 12)),
@@ -245,25 +245,24 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               fillColor: AppTheme.neonCyan.withOpacity(0.2),
               borderColor: AppTheme.neonCyan,
               entryRadius: 3,
-              dataPoints: [
-                RadarChartRawData(value: scores['cognitive_focus'] ?? 0),
-                RadarChartRawData(value: scores['strategic_prioritization'] ?? 0),
-                RadarChartRawData(value: scores['stress_resilience'] ?? 0),
-                RadarChartRawData(value: scores['leadership_impact'] ?? 0),
-                RadarChartRawData(value: 50), // Balance point
+              dataEntries: [
+                RadarEntry(value: scores['cognitive_focus'] ?? 0),
+                RadarEntry(value: scores['strategic_prioritization'] ?? 0),
+                RadarEntry(value: scores['stress_resilience'] ?? 0),
+                RadarEntry(value: scores['leadership_impact'] ?? 0),
+                RadarEntry(value: 50), // Balance point
               ],
             ),
           ],
           radarBackgroundColor: Colors.transparent,
-          borderSide: BorderSide(color: Colors.white10),
-          gridBorderData: BorderSide(color: Colors.white10),
+          gridBorderData: const BorderSide(color: Colors.white10),
           titlePositionPercentageOffset: 0.2,
           getTitle: (index, angle) {
             switch (index) {
-              case 0: return RadarChartTitle(text: 'Cognitive');
-              case 1: return RadarChartTitle(text: 'Strategy');
-              case 2: return RadarChartTitle(text: 'Resilience');
-              case 3: return RadarChartTitle(text: 'Impact');
+              case 0: return const RadarChartTitle(text: 'Cognitive');
+              case 1: return const RadarChartTitle(text: 'Strategy');
+              case 2: return const RadarChartTitle(text: 'Resilience');
+              case 3: return const RadarChartTitle(text: 'Impact');
               default: return const RadarChartTitle(text: '');
             }
           },

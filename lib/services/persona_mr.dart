@@ -40,7 +40,7 @@ class PersonaMR {
     
     print("PersonaMR: Session finalized for ${currentCandidate!.name}");
   }
-...
+ 
 
   String? _chosenPartner;
   void setPartner(String name) => _chosenPartner = name;
