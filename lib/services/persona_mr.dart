@@ -24,6 +24,22 @@ class PersonaMR {
   void setPartner(String name) => _chosenPartner = name;
   String? getPartner() => _chosenPartner;
 
+  final List<Map<String, dynamic>> _chapterMetrics = [];
+
+  void logChapterMetrics({
+    required String chapterId,
+    required int totalTimeMs,
+    Map<String, dynamic>? additionalData,
+  }) {
+    _chapterMetrics.add({
+      'chapterId': chapterId,
+      'totalTimeMs': totalTimeMs,
+      'timestamp': DateTime.now().toIso8601String(),
+      ...?additionalData,
+    });
+    print("PersonaMR Metric: $chapterId -> ${totalTimeMs}ms");
+  }
+
   void logDecision({
     required String moduleId,
     required String chapterId,

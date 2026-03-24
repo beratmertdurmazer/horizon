@@ -18,6 +18,8 @@ class Chapter1Screen extends StatefulWidget {
 }
 
 class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStateMixin {
+  late Stopwatch _stopwatch;
+  bool _isTransitioning = false;
   final List<String> _alphabet = [
     "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", 
     "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"
@@ -33,7 +35,6 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
   String _displayedText = "";
   bool _isTypingNarrative = true;
 
-  late Stopwatch _stopwatch;
   Timer? _uiUpdateTimer;
   Timer? _heartbeatTimer;
   Timer? _typewriterTimer;
@@ -49,8 +50,8 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start();
     _generateBalancedOptions();
-    _stopwatch = Stopwatch();
     
     _pulseController = AnimationController(duration: const Duration(seconds: 2), vsync: this)..repeat(reverse: true);
     _pulseAnimation = Tween<double>(begin: 0.1, end: 0.3).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut));
@@ -120,7 +121,20 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
   }
 
   void _completeChapter() {
-     PersonaMR().logDecision(moduleId: "MOD_1", chapterId: "Bölüm 1: Soğuk Uyanış", choiceId: "TRANS_MENSA_12_BALANCED", durationMs: _stopwatch.elapsedMilliseconds, triggers: ["errors_$_errorCount"]);
+    final decisionTime = _stopwatch.elapsedMilliseconds;
+    
+    PersonaMR().logDecision(
+      moduleId: "MOD_1",
+      chapterId: "Bölüm 1: Soğuk Uyanış",
+      choiceId: "TRANS_MENSA_12_BALANCED",
+      durationMs: decisionTime,
+      triggers: ["errors_$_errorCount"]
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 1: Soğuk Uyanış",
+      totalTimeMs: decisionTime,
+    );
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Chapter2Screen()));
     });

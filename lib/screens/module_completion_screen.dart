@@ -13,6 +13,7 @@ class ModuleCompletionScreen extends StatefulWidget {
 }
 
 class _ModuleCompletionScreenState extends State<ModuleCompletionScreen> with TickerProviderStateMixin {
+  late Stopwatch _stopwatch;
   late AnimationController _pulseController;
   double _progress = 0.0;
   Timer? _timer;
@@ -30,6 +31,7 @@ class _ModuleCompletionScreenState extends State<ModuleCompletionScreen> with Ti
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start();
     _pulseController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
     
     _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
@@ -187,7 +189,14 @@ class _ModuleCompletionScreenState extends State<ModuleCompletionScreen> with Ti
             const SizedBox(height: 40),
             Center(
               child: TextButton(
-                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false),
+                onPressed: () {
+                  _stopwatch.stop();
+                  PersonaMR().logChapterMetrics(
+                    chapterId: "MODULE_COMPLETION_VIEW",
+                    totalTimeMs: _stopwatch.elapsedMilliseconds,
+                  );
+                  Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                },
                 child: Text("HHC ANA TERMİNALİNE DÖN", style: GoogleFonts.sourceCodePro(color: Colors.white10, fontSize: 10, decoration: TextDecoration.underline)),
               ),
             ),

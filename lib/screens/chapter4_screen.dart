@@ -18,6 +18,8 @@ class Chapter4Screen extends StatefulWidget {
 }
 
 class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProviderStateMixin {
+  late Stopwatch _stopwatch; // New stopwatch for total page time
+  Timer? _timer; // New timer (placeholder, not used in this diff)
   late Stopwatch _decisionStopwatch;
   EnergyArea? _selectedArea;
   bool _isTransitioning = false;
@@ -35,6 +37,8 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start(); // Initialize new stopwatch
+    // _startTimer(); // Call to a new timer method, if implemented
     _decisionStopwatch = Stopwatch()..start();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat(reverse: true);
     _startTypewriter();
@@ -105,6 +109,7 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
 
   @override
   void dispose() {
+    _stopwatch.stop(); // Stop the new stopwatch
     _decisionStopwatch.stop();
     _flickerController.dispose();
     _typewriterTimer?.cancel();
@@ -139,12 +144,19 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
       case EnergyArea.greenhouse: choiceId = "SACRIFICE_GREENHOUSE_ENV"; break;
     }
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
-      moduleId: "MOD_1",
+      moduleId: "MOD_2",
       chapterId: "Bölüm 4: Karanlık Koridorlar",
-      choiceId: auto ? "${choiceId}_AUTO" : choiceId,
-      durationMs: _decisionStopwatch.elapsedMilliseconds,
-      triggers: ["energy_crisis", auto ? "timer_expired" : "manual_choice"],
+      choiceId: area.name.toUpperCase(),
+      durationMs: totalTime,
+      triggers: [area.name, "power_management"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 4: Karanlık Koridorlar",
+      totalTimeMs: totalTime,
     );
 
     Future.delayed(const Duration(seconds: 4), () {

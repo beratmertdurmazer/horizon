@@ -18,7 +18,8 @@ class Chapter5Screen extends StatefulWidget {
 }
 
 class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProviderStateMixin {
-  late Stopwatch _decisionStopwatch;
+  late Stopwatch _stopwatch;
+  bool _isTransitioning = false;
   Timer? _countdownTimer;
   Timer? _heartbeatTimer;
   int _secondsRemaining = 20;
@@ -31,7 +32,7 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _decisionStopwatch = Stopwatch()..start();
+    _stopwatch = Stopwatch()..start();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400))..repeat(reverse: true);
     _startCountdown();
     
@@ -85,18 +86,25 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
   void _endChapter(String result) {
     if (_isFinished) return;
     setState(() => _isFinished = true);
-    _decisionStopwatch.stop();
+    _stopwatch.stop();
     _countdownTimer?.cancel();
     _heartbeatTimer?.cancel();
     AudioService().stopAll();
     AudioService().playMetalClunk();
 
+    final decisionTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
-      moduleId: "MOD_1",
-      chapterId: "Bölüm 5: Son Saniyeler",
+      moduleId: "MOD_2",
+      chapterId: "Bölüm 5: Reaktör Krizi",
       choiceId: result,
-      durationMs: _decisionStopwatch.elapsedMilliseconds,
-      triggers: ["final_countdown", "30s_limit"],
+      durationMs: decisionTime,
+      triggers: ["reactor_fix", result.toLowerCase()],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 5: Reaktör Krizi",
+      totalTimeMs: decisionTime,
     );
 
     // Final result screen or next module logic

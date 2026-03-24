@@ -13,6 +13,7 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> with TickerProviderStateMixin {
+  late Stopwatch _stopwatch;
   int _currentScene = 1;
   
   late AnimationController _fadeController;
@@ -53,6 +54,7 @@ class _IntroScreenState extends State<IntroScreen> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start(); // Initialize and start stopwatch
     _fadeController = AnimationController(vsync: this, duration: const Duration(seconds: 1));
     
     // Start the constant Space Hum
@@ -104,11 +106,6 @@ class _IntroScreenState extends State<IntroScreen> with TickerProviderStateMixin
   }
 
   void _nextScene() async {
-    if (_currentScene >= 4) {
-      _finishIntro();
-      return;
-    }
-
     final scene = _scenes[_currentScene]!;
     if (_narrativeIndex < scene["narrative"]!.length || _aidaIndex < scene["aida"]!.length) {
       setState(() {
@@ -121,11 +118,20 @@ class _IntroScreenState extends State<IntroScreen> with TickerProviderStateMixin
       return;
     }
 
-    setState(() => _currentScene++);
-    _startScene();
+    if (_currentScene < _scenes.length) {
+      setState(() => _currentScene++);
+      _startScene();
+    } else {
+      _finishIntro();
+    }
   }
 
   void _finishIntro() {
+    _stopwatch.stop(); // Stop the stopwatch
+    PersonaMR().logChapterMetrics(
+      chapterId: "INTRO_SEQUENCE",
+      totalTimeMs: _stopwatch.elapsedMilliseconds,
+    );
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const Chapter1Screen()),

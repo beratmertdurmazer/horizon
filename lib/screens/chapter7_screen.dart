@@ -17,6 +17,8 @@ class Chapter7Screen extends StatefulWidget {
 }
 
 class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStateMixin {
+  late Stopwatch _stopwatch;
+  bool _isTransitioning = false;
   late Stopwatch _decisionStopwatch;
   Timer? _countdownTimer;
   Timer? _grindTimer;
@@ -33,6 +35,11 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This callback ensures the context is available for things like PersonaMR.logChapterStart
+      PersonaMR().logChapterStart(chapterId: "Bölüm 7: Sistemsel Çöküş");
+    });
     _decisionStopwatch = Stopwatch()..start();
     _binaryScrollController = AnimationController(vsync: this, duration: const Duration(seconds: 20))..repeat();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))..repeat(reverse: true);
@@ -82,20 +89,32 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
   }
 
   void _endChapter(String result) {
-    if (_isFinished) return;
-    setState(() => _isFinished = true);
+    if (_isFinished || _isTransitioning) return;
+    setState(() {
+      _isFinished = true;
+      _isTransitioning = true; // Prevent multiple calls during transition
+    });
     _decisionStopwatch.stop();
+    _stopwatch.stop(); // Stop the overall chapter stopwatch
     _countdownTimer?.cancel();
     _grindTimer?.cancel();
     AudioService().stopAll();
     AudioService().playPowerSurge();
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
       moduleId: "MOD_2",
       chapterId: "Bölüm 7: Sistemsel Çöküş",
-      choiceId: result,
-      durationMs: _decisionStopwatch.elapsedMilliseconds,
+      choiceId: result == "SUCCESS_ANALYTICAL_DEPTH" ? "BINARY_SOLVED" : result, // Log specific choice for success
+      durationMs: _decisionStopwatch.elapsedMilliseconds, // Decision specific duration
       triggers: ["binary_puzzle", "stress_30s"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 7: Sistemsel Çöküş",
+      totalTimeMs: totalTime,
+      outcome: result,
     );
 
     _showResult(result);

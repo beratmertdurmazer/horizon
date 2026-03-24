@@ -51,6 +51,21 @@ class _Chapter9ScreenState extends State<Chapter9Screen> with TickerProviderStat
     AudioService().playTypingBeep();
     AudioService().stopAll();
 
+    final totalTime = _decisionStopwatch.elapsedMilliseconds;
+
+    PersonaMR().logDecision(
+      moduleId: "MOD_2",
+      chapterId: "Bölüm 9: Enkazın Ardından",
+      choiceId: "WORD_CLOUD_COMPLETE",
+      durationMs: totalTime,
+      triggers: ["self_reflection"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 9: Enkazın Ardından",
+      totalTimeMs: totalTime,
+    );
+
     PersonaMR().logDecision(
       moduleId: "MOD_2",
       chapterId: "Bölüm 9: Enkazın Ardından",

@@ -71,12 +71,19 @@ class _Chapter13ScreenState extends State<Chapter13Screen> {
     setState(() => _isTransitioning = true);
     AudioService().playMetalClunk();
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
       moduleId: "MOD_3",
       chapterId: "Bölüm 13: Güven Testi",
       choiceId: delegate ? "DELEGATE_TRUST" : "SELF_RELIANCE_CONTROL",
-      durationMs: _stopwatch.elapsedMilliseconds,
+      durationMs: totalTime,
       triggers: [delegate ? "high_trust_delegation" : "low_trust_micro_management", "module_3_final"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 13: Güven Testi",
+      totalTimeMs: totalTime,
     );
 
     // Final Transition

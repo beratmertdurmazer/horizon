@@ -18,6 +18,8 @@ class Chapter2Screen extends StatefulWidget {
 enum TriageSystem { reactor, oxygen, comms, none }
 
 class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStateMixin {
+  late Stopwatch _stopwatch;
+  bool _isTransitioning = false;
   // Sistem Durumları (0.0 - 1.0)
   double _reactorHealth = 0.6;
   double _oxygenLevel = 0.5;
@@ -131,16 +133,33 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
     _isCompleted = true;
     _tickTimer?.cancel();
     _heartbeatTimer?.cancel();
-    
+    _stopwatch.stop(); // Stop the stopwatch
+    final decisionTime = _stopwatch.elapsedMilliseconds;
+
+    // Determine choiceId based on the first priority or a default if none was set
+    String choiceId;
+    if (_firstPriority != null) {
+      // Assuming "Sarı" and "URGENT" are placeholders for specific triage outcomes
+      // For now, we'll use a generic choice based on the first priority
+      choiceId = "TRIAGE_COMPLETED_WITH_PRIORITY_${_firstPriority.toString().split('.').last.toUpperCase()}";
+    } else {
+      choiceId = "TRIAGE_TIME_UP"; // Original choice if no focus was made
+    }
+
     PersonaMR().logDecision(
       moduleId: "MOD_1",
-      chapterId: "Bölüm 2: İlk TriaJ",
-      choiceId: "TRIAGE_TIME_UP",
-      durationMs: 20000,
+      chapterId: "Bölüm 2: Triage",
+      choiceId: choiceId, // Using the determined choiceId
+      durationMs: decisionTime,
       triggers: [
         "priority_${_firstPriority.toString().split('.').last}",
-        "final_avg_${(_reactorHealth + _oxygenLevel + _commsSignal) / 3}"
+        "final_avg_${((_reactorHealth + _oxygenLevel + _commsSignal) / 3).toStringAsFixed(2)}"
       ],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 2: Triage",
+      totalTimeMs: decisionTime,
     );
 
     Future.delayed(const Duration(seconds: 2), () {

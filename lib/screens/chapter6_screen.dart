@@ -16,7 +16,7 @@ class Chapter6Screen extends StatefulWidget {
 }
 
 class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStateMixin {
-  late Stopwatch _decisionStopwatch;
+  late Stopwatch _stopwatch;
   bool _alarmsMuted = false;
   bool _isTransitioning = false;
   late AnimationController _flickerController;
@@ -26,7 +26,7 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _decisionStopwatch = Stopwatch()..start();
+    _stopwatch = Stopwatch()..start();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200))..repeat(reverse: true);
     _floatingAlarmsController = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
     
@@ -47,12 +47,19 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
       AudioService().playMetalClunk();
     }
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
       moduleId: "MOD_2",
       chapterId: "Bölüm 6: Alarm Yorgunluğu",
-      choiceId: mute ? "MUTE_ALARMS_COMFORT" : "KEEP_ALARMS_VIGILANCE",
-      durationMs: _decisionStopwatch.elapsedMilliseconds,
-      triggers: ["noise_stress_level_high"],
+      choiceId: mute ? "MUTE_ALARMS_COMFORT" : "KEEP_ALARMS_VIGILANCE", // Reverted to original logic for choiceId
+      durationMs: totalTime,
+      triggers: ["noise_stress_level_high"], // Reverted to original logic for triggers
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 6: Alarm Yorgunluğu",
+      totalTimeMs: totalTime,
     );
 
     Future.delayed(const Duration(seconds: 3), () {

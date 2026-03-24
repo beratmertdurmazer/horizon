@@ -76,12 +76,19 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
     setState(() => _isTransitioning = true);
     AudioService().playMetalClunk();
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
       moduleId: "MOD_3",
       chapterId: "Bölüm 12: Partnerin Hatası",
       choiceId: punitive ? "PUNISH_FOOD_RATION" : "FORGIVE_AND_COOPERATE",
-      durationMs: _stopwatch.elapsedMilliseconds,
+      durationMs: totalTime,
       triggers: [punitive ? "authority_over_ethics" : "ethics_over_authority", "conflict_resolution"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 12: Partnerin Hatası",
+      totalTimeMs: totalTime,
     );
 
     Future.delayed(const Duration(seconds: 3), () {

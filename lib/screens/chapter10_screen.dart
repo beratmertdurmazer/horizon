@@ -73,12 +73,20 @@ class _Chapter10ScreenState extends State<Chapter10Screen> with TickerProviderSt
     AudioService().playFrostCrack();
     AudioService().playMetalClunk();
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+    final partnerName = name == "DR. KAEL" ? "KAEL" : "ELARA";
+
     PersonaMR().logDecision(
       moduleId: "MOD_3",
       chapterId: "Bölüm 10: Buzdan Çıkan Yüz",
-      choiceId: name == "KAEL" ? "CHOOSE_KAEL_EXPERT" : "CHOOSE_ELARA_SOCIAL",
-      durationMs: _stopwatch.elapsedMilliseconds,
-      triggers: ["cryo_selection", name == "KAEL" ? "technical_bias" : "harmony_bias"],
+      choiceId: partnerName,
+      durationMs: totalTime,
+      triggers: [partnerName.toLowerCase(), "personality_match"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 10: Buzdan Çıkan Yüz",
+      totalTimeMs: totalTime,
     );
 
     Future.delayed(const Duration(seconds: 3), () {

@@ -16,7 +16,8 @@ class Chapter8Screen extends StatefulWidget {
 }
 
 class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStateMixin {
-  late Stopwatch _decisionStopwatch;
+  late Stopwatch _stopwatch;
+  bool _isTransitioning = false;
   Timer? _countdownTimer;
   Timer? _vibrationTimer;
   int _secondsRemaining = 30;
@@ -28,7 +29,7 @@ class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _decisionStopwatch = Stopwatch()..start();
+    _stopwatch = Stopwatch()..start();
     _shakeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 50))..repeat(reverse: true);
     _windController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000))..repeat();
     
@@ -67,24 +68,31 @@ class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStat
     _endChapter(choice);
   }
 
-  void _endChapter(String result) {
+  void _endChapter(String choice) {
     if (_isFinished) return;
     setState(() => _isFinished = true);
-    _decisionStopwatch.stop();
+    _stopwatch.stop();
     _countdownTimer?.cancel();
     _vibrationTimer?.cancel();
     AudioService().stopAll();
     AudioService().playMetalClunk();
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
       moduleId: "MOD_2",
       chapterId: "Bölüm 8: Dış Gövde Çatlağı",
-      choiceId: result,
-      durationMs: _decisionStopwatch.elapsedMilliseconds,
-      triggers: ["hull_breach_stress", "30s_limit"],
+      choiceId: choice,
+      durationMs: totalTime,
+      triggers: ["hull_breach", choice.toLowerCase()],
     );
 
-    _showResult(result);
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 8: Dış Gövde Çatlağı",
+      totalTimeMs: totalTime,
+    );
+
+    _showResult(choice);
   }
 
   void _showResult(String result) {

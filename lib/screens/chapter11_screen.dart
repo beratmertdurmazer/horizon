@@ -83,12 +83,20 @@ class _Chapter11ScreenState extends State<Chapter11Screen> with TickerProviderSt
     setState(() => _isTransitioning = true);
     AudioService().playMetalClunk();
 
+    final totalTime = _stopwatch.elapsedMilliseconds;
+    final bool authority = !collaborative; // Map 'collaborative' to 'authority' for choiceId and triggers
+
     PersonaMR().logDecision(
       moduleId: "MOD_3",
       chapterId: "Bölüm 11: İlk Tartışma",
-      choiceId: collaborative ? "LISTEN_AND_RECHECK" : "AUTHORITARIAN_COMMAND",
-      durationMs: _stopwatch.elapsedMilliseconds,
-      triggers: [collaborative ? "collaborative_leadership" : "authoritarian_leadership", "conflict_management"],
+      choiceId: authority ? "AUTHORITY_OVER_ETHICS" : "ETHICS_OVER_AUTHORITY",
+      durationMs: totalTime,
+      triggers: [authority ? "authoritarian" : "cooperative", "conflict_resolution"],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 11: İlk Tartışma",
+      totalTimeMs: totalTime,
     );
 
     Future.delayed(const Duration(seconds: 3), () {

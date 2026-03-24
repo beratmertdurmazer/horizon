@@ -27,6 +27,7 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
   Timer? _uiTimer;
   late Stopwatch _stopwatch;
   bool _isCompleted = false;
+  bool _isTransitioning = false; // Added this line
 
   // PersonaMR
   int _distractionClicks = 0;
@@ -36,9 +37,11 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
-    _setupGame();
-    _startPopupRain();
-    _uiTimer = Timer.periodic(const Duration(milliseconds: 100), (t) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setupGame();
+      _startPopupRain();
+      _uiTimer = Timer.periodic(const Duration(milliseconds: 100), (t) => setState(() {}));
+    });
   }
 
   void _setupGame() {
@@ -189,18 +192,23 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
   void _completeChapter() {
     _isCompleted = true;
     _stopwatch.stop();
-    _popupTimer?.cancel();
-    
+    final decisionTime = _stopwatch.elapsedMilliseconds;
+
     PersonaMR().logDecision(
       moduleId: "MOD_1",
       chapterId: "Bölüm 3: Parazitler",
-      choiceId: "MATCHING_COMPLETE",
-      durationMs: _stopwatch.elapsedMilliseconds,
+      choiceId: "MATCHING_COMPLETE", // Assuming this is the choiceId for completion
+      durationMs: decisionTime,
       triggers: [
         "distraction_clicks_$_distractionClicks",
         "game_clicks_$_gameClicks",
         "focus_ratio_${_gameClicks / (_gameClicks + _distractionClicks + 1)}"
       ],
+    );
+
+    PersonaMR().logChapterMetrics(
+      chapterId: "Bölüm 3: Parazitler",
+      totalTimeMs: decisionTime,
     );
     // Navigate...
   }
