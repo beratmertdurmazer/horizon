@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
+import 'package:horizon_protocol/screens/chapter3_screen.dart';
 
 class Chapter2Screen extends StatefulWidget {
   const Chapter2Screen({super.key});
@@ -103,7 +104,17 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
     _isCompleted = true;
     _stopwatch.stop();
     _tickTimer?.cancel();
+    _heartbeatTimer?.cancel();
     PersonaMR().logDecision(moduleId: "MOD_1", chapterId: "Bölüm 2: İlk TriaJ", choiceId: "TRIAGE_COMPLETED", durationMs: _stopwatch.elapsedMilliseconds, triggers: ["priority_${_firstPriority.toString().split('.').last}", "balance_score_${(_reactorHealth + _oxygenLevel + _commsSignal) / 3}"]);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Chapter3Screen()),
+        );
+      }
+    });
   }
 
   @override
