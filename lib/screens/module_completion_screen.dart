@@ -51,12 +51,13 @@ class _ModuleCompletionScreenState extends State<ModuleCompletionScreen> with Ti
     });
   }
 
+  bool _isFinalized = false;
+
   void _finalize() {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-      }
+    setState(() {
+      _isFinalized = true;
     });
+    // No longer navigates back automatically. Stay in the cold end state.
   }
 
   @override
@@ -160,19 +161,37 @@ class _ModuleCompletionScreenState extends State<ModuleCompletionScreen> with Ti
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
-        border: Border.all(color: Colors.white10),
+        color: _isFinalized ? Colors.redAccent.withOpacity(0.02) : Colors.white.withOpacity(0.02),
+        border: Border.all(color: _isFinalized ? Colors.redAccent.withOpacity(0.2) : Colors.white10),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("SYSTEM LOGS:", style: GoogleFonts.sourceCodePro(color: Colors.white24, fontSize: 10)),
+          Text(_isFinalized ? "CONNECTION STATUS:" : "SYSTEM LOGS:", style: GoogleFonts.sourceCodePro(color: Colors.white24, fontSize: 10)),
           const SizedBox(height: 12),
           Text(
-            _logs[_logIndex],
-            style: GoogleFonts.sourceCodePro(color: AppTheme.neonCyan.withOpacity(0.8), fontSize: 12),
+            _isFinalized ? "BAĞLANTI KESİLDİ. ANALİZ ARŞİVLENDİ." : _logs[_logIndex],
+            style: GoogleFonts.sourceCodePro(
+              color: _isFinalized ? Colors.redAccent : AppTheme.neonCyan.withOpacity(0.8), 
+              fontSize: 12,
+              fontWeight: _isFinalized ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
+          if (_isFinalized) ...[
+            const SizedBox(height: 20),
+            Text(
+              "THE END / MODÜL 3 SONU",
+              style: GoogleFonts.rajdhani(color: Colors.white24, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 8),
+            ),
+            const SizedBox(height: 40),
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false),
+                child: Text("HHC ANA TERMİNALİNE DÖN", style: GoogleFonts.sourceCodePro(color: Colors.white10, fontSize: 10, decoration: TextDecoration.underline)),
+              ),
+            ),
+          ],
         ],
       ),
     );
