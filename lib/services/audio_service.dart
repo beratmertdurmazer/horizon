@@ -332,6 +332,43 @@ class AudioService {
     } catch (e) {}
   }
 
+  void playPowerOn() {
+    try {
+      final ctx = _getContext();
+      final osc = ctx.createOscillator();
+      final gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(40, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 1.0);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.5);
+    } catch (e) {}
+  }
+
+  void playStaticBurst() {
+    try {
+      final ctx = _getContext();
+      final osc = ctx.createOscillator();
+      final gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(100, ctx.currentTime);
+      // Frequency jitter
+      for (int i = 0; i < 5; i++) {
+        osc.frequency.setValueAtTime(100 + (i * 50), ctx.currentTime + (i * 0.05));
+      }
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (e) {}
+  }
+
   void stopAll() {
     try { _ambientOsc?.stop(); _ambientOsc = null; } catch (e) {}
     try { _sirenOsc?.stop(); _sirenOsc = null; } catch (e) {}

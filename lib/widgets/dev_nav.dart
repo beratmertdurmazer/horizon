@@ -14,6 +14,7 @@ import 'package:horizon_protocol/screens/chapter11_screen.dart';
 import 'package:horizon_protocol/screens/chapter12_screen.dart';
 import 'package:horizon_protocol/screens/chapter13_screen.dart';
 import 'package:horizon_protocol/screens/intro_screen.dart';
+import 'package:horizon_protocol/screens/admin_dashboard_screen.dart';
 
 class DevNav extends StatefulWidget {
   const DevNav({super.key});
@@ -61,6 +62,8 @@ class _DevNavState extends State<DevNav> {
             _buildNavButton("C12", const Chapter12Screen()),
             const SizedBox(height: 8),
             _buildNavButton("C13", const Chapter13Screen()),
+            const SizedBox(height: 12),
+            _buildNavButton("ADMIN", const AdminDashboardScreen()),
             const SizedBox(height: 12),
           ],
           FloatingActionButton.small(

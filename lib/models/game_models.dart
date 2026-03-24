@@ -1,15 +1,15 @@
 class Candidate {
   final String id;
   final String name;
-  final String email;
-  final Map<String, double> scores; // {"cognitive_agility": 85, etc.}
-  final List<String> behavioralFlags;
+  final String position; // Email yerine Position eklendi
+  final Map<String, double> scores; // {"cognitive_focus": 85, "stress_resilience": 72, etc.}
+  final List<String> behavioralFlags; // ["analytical_problem_solver", etc.]
   final DateTime createdAt;
 
   Candidate({
     required this.id,
     required this.name,
-    required this.email,
+    required this.position,
     required this.scores,
     required this.behavioralFlags,
     required this.createdAt,
@@ -19,9 +19,20 @@ class Candidate {
     return {
       'id': id,
       'name': name,
-      'email': email,
+      'position': position,
       'createdAt': createdAt.toIso8601String(),
     };
+  }
+
+  factory Candidate.fromMap(Map<String, dynamic> map) {
+    return Candidate(
+      id: map['id'],
+      name: map['name'],
+      position: map['position'],
+      scores: {}, // Scores and flags are normally loaded separately or as JSON
+      behavioralFlags: [],
+      createdAt: DateTime.parse(map['createdAt']),
+    );
   }
 }
 
@@ -32,7 +43,7 @@ class Decision {
   final String chapterId;
   final String choiceId;
   final int durationMs;
-  final List<String> triggers; // Örneğin ["slow_decision", "risk_averse"]
+  final List<String> triggers;
   final DateTime timestamp;
 
   Decision({
@@ -54,6 +65,35 @@ class Decision {
       'chapterId': chapterId,
       'choiceId': choiceId,
       'durationMs': durationMs,
+      // Triggers will be handled as JSON string in DB service
+      'timestamp': timestamp.toIso8601String(),
+    };
+  }
+}
+
+class ChapterMetric {
+  final String id;
+  final String candidateId;
+  final String chapterId;
+  final int totalTimeMs;
+  final Map<String, dynamic>? additionalData;
+  final DateTime timestamp;
+
+  ChapterMetric({
+    required this.id,
+    required this.candidateId,
+    required this.chapterId,
+    required this.totalTimeMs,
+    this.additionalData,
+    required this.timestamp,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'candidateId': candidateId,
+      'chapterId': chapterId,
+      'totalTimeMs': totalTimeMs,
       'timestamp': timestamp.toIso8601String(),
     };
   }

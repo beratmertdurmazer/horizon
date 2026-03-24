@@ -72,19 +72,24 @@ class _Chapter13ScreenState extends State<Chapter13Screen> {
     AudioService().playMetalClunk();
 
     final totalTime = _stopwatch.elapsedMilliseconds;
+    
+    // Asenkron loglama ve finalizasyon
+    () async {
+      await PersonaMR().logDecision(
+        moduleId: "MOD_3",
+        chapterId: "Bölüm 13: Güven Testi",
+        choiceId: delegate ? "DELEGATE_TRUST" : "SELF_RELIANCE_CONTROL",
+        durationMs: totalTime,
+        triggers: [delegate ? "high_trust_delegation" : "low_trust_micro_management", "module_3_final"],
+      );
 
-    PersonaMR().logDecision(
-      moduleId: "MOD_3",
-      chapterId: "Bölüm 13: Güven Testi",
-      choiceId: delegate ? "DELEGATE_TRUST" : "SELF_RELIANCE_CONTROL",
-      durationMs: totalTime,
-      triggers: [delegate ? "high_trust_delegation" : "low_trust_micro_management", "module_3_final"],
-    );
+      await PersonaMR().logChapterMetrics(
+        chapterId: "Bölüm 13: Güven Testi",
+        totalTimeMs: totalTime,
+      );
 
-    PersonaMR().logChapterMetrics(
-      chapterId: "Bölüm 13: Güven Testi",
-      totalTimeMs: totalTime,
-    );
+      await PersonaMR().finalizeCandidateSession();
+    }();
 
     // Final Transition
     Future.delayed(const Duration(seconds: 4), () {
