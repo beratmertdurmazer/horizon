@@ -49,6 +49,7 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start();
     _pulseController = AnimationController(duration: const Duration(seconds: 2), vsync: this)..repeat(reverse: true);
     _stressController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this)..repeat(reverse: true);
     _glitchController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
@@ -66,8 +67,6 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
         
         if (_timeLeft <= 0) {
           _timeLeft = 0;
-          _completeTriage();
-          return;
         }
 
         double decayFactor = 0.0025; // Biraz daha hızlandırdım kaosu artırmak için
@@ -95,6 +94,10 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
            _triggerGlitch();
         }
       });
+
+      if (_timeLeft <= 0) {
+        _completeTriage();
+      }
     });
   }
 

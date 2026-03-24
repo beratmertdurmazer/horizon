@@ -50,7 +50,7 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()..start();
+    _stopwatch = Stopwatch(); // Don't start yet, starts after narrative
     _generateBalancedOptions();
     
     _pulseController = AnimationController(duration: const Duration(seconds: 2), vsync: this)..repeat(reverse: true);

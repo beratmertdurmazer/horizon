@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
+import 'package:horizon_protocol/services/persona_mr.dart';
 
 class ModuleCompletionScreen extends StatefulWidget {
   final String moduleTitle;

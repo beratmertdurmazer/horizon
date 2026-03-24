@@ -6,6 +6,7 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/widgets/dev_nav.dart';
+import 'package:horizon_protocol/screens/chapter4_screen.dart';
 
 class Chapter3Screen extends StatefulWidget {
   const Chapter3Screen({super.key});
@@ -37,8 +38,8 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
+    _setupGame();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setupGame();
       _startPopupRain();
       _uiTimer = Timer.periodic(const Duration(milliseconds: 100), (t) => setState(() {}));
     });
@@ -210,7 +211,12 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
       chapterId: "Bölüm 3: Parazitler",
       totalTimeMs: decisionTime,
     );
-    // Navigate...
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Chapter4Screen()));
+      }
+    });
   }
 
   @override

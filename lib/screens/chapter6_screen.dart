@@ -74,7 +74,7 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
 
   @override
   void dispose() {
-    _decisionStopwatch.stop();
+    _stopwatch.stop();
     _flickerController.dispose();
     _floatingAlarmsController.dispose();
     AudioService().stopAll();

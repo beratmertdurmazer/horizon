@@ -36,10 +36,6 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // This callback ensures the context is available for things like PersonaMR.logChapterStart
-      PersonaMR().logChapterStart(chapterId: "Bölüm 7: Sistemsel Çöküş");
-    });
     _decisionStopwatch = Stopwatch()..start();
     _binaryScrollController = AnimationController(vsync: this, duration: const Duration(seconds: 20))..repeat();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))..repeat(reverse: true);
@@ -114,7 +110,6 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 7: Sistemsel Çöküş",
       totalTimeMs: totalTime,
-      outcome: result,
     );
 
     _showResult(result);
