@@ -323,42 +323,54 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   ],
                 ),
                 children: [
-                  const Divider(color: Colors.white10, height: 20),
-                  if (chapterDecisions.isNotEmpty) ...[
-                    Text("ANA KARARLAR", 
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.rajdhani(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 15),
-                    ...chapterDecisions.map((d) => Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("SEÇİM: ${_translateChoice(d.choiceId).toTurkishUpperCase()}", 
+                          const Divider(color: Colors.white10, height: 20),
+                          if (chapterDecisions.isNotEmpty) ...[
+                            Text("ANA KARARLAR", 
+                              textAlign: TextAlign.left,
+                              style: GoogleFonts.rajdhani(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 15),
+                            ...chapterDecisions.map((d) => Padding(
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("SEÇİM: ${_translateChoice(d.choiceId).toTurkishUpperCase()}", 
+                                    textAlign: TextAlign.left,
+                                    style: GoogleFonts.sourceCodePro(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    alignment: WrapAlignment.start,
+                                    spacing: 5,
+                                    children: d.triggers.map((t) => Text("#$t", style: GoogleFonts.sourceCodePro(color: Colors.blueAccent.withOpacity(0.5), fontSize: 9))).toList(),
+                                  ),
+                                ],
+                              ),
+                            )),
+                            const SizedBox(height: 15),
+                          ],
+                          
+                          // KLİNİK ANALİZ METRİKLERİ
+                          _buildClinicalMetrics(metric.additionalData),
+                          const SizedBox(height: 25),
+                          
+                          // ETKİLEŞİM ZAMAN ÇİZELGESİ (TIMELINE)
+                          Text("ETKİLEŞİM ZAMAN ÇİZELGESİ", 
                             textAlign: TextAlign.left,
-                            style: GoogleFonts.sourceCodePro(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: 5,
-                            children: d.triggers.map((t) => Text("#$t", style: GoogleFonts.sourceCodePro(color: Colors.blueAccent.withOpacity(0.5), fontSize: 9))).toList(),
-                          ),
+                            style: GoogleFonts.rajdhani(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 15),
+                          _buildTimeline(metric.additionalData?['timeline'] as List?),
+                          const SizedBox(height: 10),
                         ],
                       ),
-                    )),
-                    const SizedBox(height: 15),
-                  ],
-                  
-                  // KLİNİK ANALİZ METRİKLERİ
-                  _buildClinicalMetrics(metric.additionalData),
-                  const SizedBox(height: 25),
-                  
-                  // ETKİLEŞİM ZAMAN ÇİZELGESİ (TIMELINE)
-                  Text("ETKİLEŞİM ZAMAN ÇİZELGESİ", 
-                    textAlign: TextAlign.left,
-                    style: GoogleFonts.rajdhani(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 15),
-                  _buildTimeline(metric.additionalData?['timeline'] as List?),
+                    ),
+                  ),
                 ],
               ),
             );
