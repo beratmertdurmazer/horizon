@@ -36,6 +36,7 @@ class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStat
     
     _startCountdown();
     _startEffects();
+    PersonaMR().startChapterTimer("Bölüm 8: Dış Gövde Çatlağı");
   }
 
   void _startCountdown() {
@@ -66,6 +67,7 @@ class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStat
   }
 
   void _handleDecision(String choice) {
+    PersonaMR().recordInteraction("Bölüm 8: Dış Gövde Çatlağı", "DECISION_MADE", metadata: {"choice": choice});
     _endChapter(choice);
   }
 
@@ -91,6 +93,9 @@ class _Chapter8ScreenState extends State<Chapter8Screen> with TickerProviderStat
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 8: Dış Gövde Çatlağı",
       totalTimeMs: totalTime,
+      additionalData: {
+        "reactionTime": totalTime, // In this case, total chapter time IS the reaction time to the single event
+      },
     );
 
     _showResult(choice);

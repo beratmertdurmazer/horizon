@@ -25,6 +25,7 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
   Timer? _grindTimer;
   int _secondsRemaining = 180;
   int _bluePressCount = 0;
+  int _errorCount = 0;
   bool _isFinished = false;
   
   late AnimationController _binaryScrollController;
@@ -43,6 +44,7 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
     
     _startCountdown();
     _startMetalGrind();
+    PersonaMR().startChapterTimer("Bölüm 7: Sistemsel Çöküş");
   }
 
   void _startCountdown() {
@@ -76,11 +78,14 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
 
     if (isBlue) {
       _bluePressCount++;
+      PersonaMR().recordInteraction("Bölüm 7: Sistemsel Çöküş", "BLUE_BUTTON_PRESSED", metadata: {"count": _bluePressCount});
       if (_bluePressCount == 2) {
         _endChapter("SUCCESS_ANALYTICAL_DEPTH");
       }
     } else {
       // Red button pressed - failure/impulsive
+      _errorCount++;
+      PersonaMR().recordInteraction("Bölüm 7: Sistemsel Çöküş", "RED_BUTTON_PRESSED");
       _endChapter("FAIL_IMPULSIVE_RANDOM");
     }
   }
@@ -111,6 +116,9 @@ class _Chapter7ScreenState extends State<Chapter7Screen> with TickerProviderStat
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 7: Sistemsel Çöküş",
       totalTimeMs: totalTime,
+      additionalData: {
+        "errorCount": _errorCount,
+      },
     );
 
     _showResult(result);

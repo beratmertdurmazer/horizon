@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizon Protocol: Klinik İK Değerlendirme & Analiz Kılavuzu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --bg-black: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --text-white: #ffffff;
+            --text-gray: #888888;
+        }
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            font-family: 'Source Code Pro', monospace;
+            margin: 0;
+            padding: 40px;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            padding-bottom: 40px;
+        }
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
+            color: var(--neon-cyan);
+            letter-spacing: 12px;
+            margin: 0;
+        }
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 14px;
+            letter-spacing: 4px;
+            margin-top: 10px;
+        }
+        .intro-box {
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            padding: 30px;
+            margin-bottom: 60px;
+            font-size: 15px;
+            text-align: justify;
+            border-radius: 4px;
+            color: #ccc;
+        }
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        .chapter-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .chapter-card:hover { border-color: rgba(0, 243, 255, 0.2); transform: translateY(-5px); }
+        .chapter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+        .chapter-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+        }
+        .tag {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-cyan);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            text-transform: uppercase;
+        }
+        .detail-item {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        .label {
+            width: 220px;
+            color: var(--text-gray);
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .value {
+            flex: 1;
+            color: #eee;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        th {
+            background: rgba(0, 243, 255, 0.02);
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+        td { color: #bbb; }
+        .footer {
+            margin-top: 100px;
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-gray);
+            font-size: 12px;
+        }
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            h1 { font-size: 1.8rem; letter-spacing: 4px; }
+            .subtitle { font-size: 10px; letter-spacing: 1px; }
+            .detail-item { flex-direction: column; }
+            .label { width: 100%; margin-bottom: 5px; color: var(--neon-cyan); opacity: 0.7; }
+            .chapter-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .chapter-title { font-size: 1.4rem; }
+            table { font-size: 10px; display: block; overflow-x: auto; }
+            th, td { padding: 10px; min-width: 120px; }
+            .chapter-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HORIZON PROTOCOL</h1>
+            <div class="subtitle">KLİNİK ANALİTİK & İNSAN KAYNAKLARI MASTER DEĞERLENDİRME KILAVUZU</div>
+        </header>
+
+        <div class="intro-box">
+            Bu döküman, adayların davranışsal telemetri verilerini İK metriklerine dönüştüren "Horizon Assessment Engine"in (v3.1) tam çalışma prensiplerini içerir. Her bölüm, aday üzerinde bilişsel bir stres noktası veya etik bir ikilem yaratarak, gerçek hayattaki iş reflekslerini (Kriz yönetimi, delegasyon, odaklanma) ölçer.
+        </div>
+
+        <div class="chapter-grid">
+            <!-- Bölüm 1 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 1: Soğuk Uyanış</h3><span class="tag">AKICI ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Issız, karanlık bir uzay istasyonu koridoru; sadece yanıp sönen acil durum ışıkları ve sistemin mekanik "boot" sesi.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Beklenmedik bir kriz anında bilişsel kaynakları en hızlı şekilde aktive edebilme ve örüntü yakalama kapasitesini ölçmek.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Kriz Yönetimi, Hızlı Adaptasyon ve Sayısal Muhakeme (Numerical Reasoning).</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>errorCount</td><td>Dürtüsellik ve Deneme/Yanılma</td><td>>3 hata: -15 Stres Skoru</td></tr>
+                        <tr><td>durationMs</td><td>Bilgi İşleme Hızı</td><td>0-5sn: +15 Odak Skoru</td></tr>
+                        <tr><td>timeToFirstClick</td><td>Analitik İnisiyatif</td><td>Gecikme: Analitik Paralizi tespiti</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 2 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 2: Triage</h3><span class="tag">SİSTEM ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Kritik alarm seslerinin yükseldiği, duman altındaki enerji kontrol odası. Zaman daralıyor.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Sınırlı kaynakları (enerji), duygusal bağlar ile kurumsal bekâ arasındaki terazide nasıl konumlandırdığını görmek.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Stratejik Karar Alma, Kurumsal Sadakat ve Kaynak Yönetimi.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>focus_order</td><td>Önceliklendirme Hiyerarşisi</td><td>İlk tıklama: Bilinçaltı risk algısı</td></tr>
+                        <tr><td>switch_count</td><td>Karar Verme Kararsızlığı</td><td>>12 switch: Aşırı Flickering Skoru</td></tr>
+                        <tr><td>final_levels</td><td>Operasyonel Titizlik</td><td>Tüm sistemler >%65: Mükemmeliyetçilik</td></tr>
+                        <tr><td>choiceId</td><td>Stratejik Fokus</td><td>Reaktör İhmali: Önceliklendirme Zafiyeti</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 3 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 3: Parazitler</h3><span class="tag">SEÇİCİ DİKKAT</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Veri akışının olduğu bir terminal ekranı; aniden fırlayan parazit menüleri ve titreyen görüntüler.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Ana işe odaklanırken çevresel gürültüyü (noise) filtreleme yeteneğini test etmek.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Odaklanma Kapasitesi, Hata Toleransı ve Detay Dikkat.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>reactionTime</td><td>Odak Erozyonu (Distractibility)</td><td>>2sn: -15 Odak Skoru</td></tr>
+                        <tr><td>missedPopups</td><td>Dikkat Bölünmesi Toleransı</td><td>Görmezden gelme: + Odak Skor</td></tr>
+                        <tr><td>symbolMatchErrors</td><td>Multi-tasking Yıkımı</td><td>Hata: Performans düşüşü</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 4 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 4: Kritik Yol</h3><span class="tag">ETİK ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Derin, karanlık bir asansör boşluğu veya robotik laboratuvarın giriş kapısı.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">İlk yapılan büyük seçimin (Section 2) uygulamadaki tutarlılığını zorlayıcı şartlar altında ölçmek.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Karar Tutarlılığı, Öz-Disiplin ve Felsefi Omurga (Integrity).</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>choiceConsistency</td><td>Felsefi Omurga (Söylem-Eylem)</td><td>Tutarsızlık: -25 Tutarlılık Skoru</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 5 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 5: Erişim</h3><span class="tag">İŞLEYEN BELLEK</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Kırmızı bir geri sayım barının çılgınca azaldığı kilitli bir kapı terminali.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Daralan zaman kısıtı altında karmaşık metinleri tarayıp doğru bilgiyi (PIN) bulma hızını ölçmek.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Zaman Yönetimi, Analitik Taramacılık ve Bilişsel Yük Yönetimi.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>failedAttempts</td><td>Panik Toleransı</td><td>Her Hata: -10 Stres Skoru</td></tr>
+                        <tr><td>readingTime</td><td>Seçici Okuma Yetisi</td><td>Analitik Skorlara yansıma</td></tr>
+                        <tr><td>durationMs</td><td>Analitik Paralizi (Donma)</td><td>>60sn: Analitik Paralizi risk bayrağı</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 6 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 6: Kaos</h3><span class="tag">DUYGU REGÜLASYONU</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Ekranın şiddetle titrediği, sahte mesajların uçuştuğu ve siren sesleri.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Duygusal gürültü ve kaosun ortasında en rasyonel ve basit adımı bulabilme becerisi.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Stres Altında Verimlilik, Duygusal Dayanıklılık (Resilience) ve Panik Yönetimi.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>panic_clicks</td><td>Taktik Soğukkanlılık Krizi</td><td>Spam tık: -25 Stres Skoru</td></tr>
+                        <tr><td>mutingSpeed</td><td>Akılcı Yaklaşım</td><td>Hızlı sessize alma: + Kriz Puanı</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 7 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 7: Binary Code</h3><span class="tag">PRATİK ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Donmuş bir sistem ekranında akan 0 ve 1'lerden oluşan veri şeridi.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Bilmediği bir konuyu anlık olarak dış kaynaklardan araştırıp öğrenme ve uygulama hızı.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Öğrenme Çevikliği (Learning Agility), Araştırmacılık ve Problem Çözme.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>durationMs</td><td>Araştırma Hızı (Resourcefulness)</td><td>Stres altındaki analitik atiklik</td></tr>
+                        <tr><td>errorCount</td><td>Yanlış Kod/Metin Girişi</td><td>Panik anında okuduğunu anlama sorunu</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 8 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 8: Sızıntı</h3><span class="tag">YÜRÜTÜCÜ İŞLEVLER</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Basıncın düştüğü, her yerden hava sızıntısı duyulan bir geçit koridoru.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Can güvenliği riski altında prosedürlere (Önce kendi masken) sadakat ölçümü.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Kurallar ve Prosedür Uyumu, Öz-Koruma vs. Risk Alma.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>choiceId</td><td>Mantık vs Duygu Refleksi</td><td>Doğru Protokol: +15 Stres/Karar</td></tr>
+                        <tr><td>actionDelay</td><td>Reaksiyon Süresi</td><td>Aciliyite uygun tepki ölçümü</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 9 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 9: Enkaz</h3><span class="tag">İÇSEL ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Ortalığın sessizleştiği, hasarın raporlanması gereken teknik oda.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Bir hatanın veya krizin sorumluluğunu kime/neye atadığını saptamak.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Hesap Verebilirlik (Accountability), Özyeterlilik ve Hata Kültürü.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>choiceId</td><td>Kontrol Odağı (Locus of Control)</td><td>İçsel: + Öz-Farkındalık Skoru</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 10-11 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 10-11: Tartışma</h3><span class="tag">SOSYAL ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">AI modüllerinin (Kael vs Elara) hararetli tartıştığı kokpit ortamı.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Farklı fikirler arasındaki çatışmada otorite vs uzlaşı arama eğilimi.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Müzakere Becerileri, Takım Yönetimi ve Demokratik Liderlik.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>choiceId</td><td>Otoriterlik vs İşbirliği</td><td>Diktatör eğilimi: -10 Liderlik</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 12 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 12: Müdahale</h3><span class="tag">KİŞİLERARASI IQ</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Partner modülün ölümcül bir hata yaptığı dijital arayüz.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Beraber çalıştığı birinin hatasına karşı cezalandırıcı vs geliştirici bakış.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Psikolojik Güvenlik İnşası, Mentorluk ve Delegasyon Etiği.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>choiceId</td><td>Psikolojik Güvenlik İnşası</td><td>Affetme: +20 Liderlik Skoru</td></tr>
+                        <tr><td>durationMs</td><td>Cezalandırma Hızı</td><td>Hızlı Ceza: Dürtüsel-Cezalandırıcı profili</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bölüm 13 -->
+            <div class="chapter-card">
+                <div class="chapter-header"><h3 class="chapter-title">Bölüm 13: Final</h3><span class="tag">ORGANİZASYONEL ZEKA</span></div>
+                <div class="detail-item"><div class="label">Sahne & Atmosfer</div><div class="value">Sistemlerin "finalize" edildiği görkemli final ekranı.</div></div>
+                <div class="detail-item"><div class="label">Amaç</div><div class="value">Tüm kontrolü elde tutma vs ekibe güvenerek delege etme eğilimi.</div></div>
+                <div class="detail-item"><div class="label">Psikometrik</div><div class="value">Delegasyon, Güven İnşası ve Stratejik Yetkilendirme.</div></div>
+                <table>
+                    <thead><tr><th>Metrik</th><th>Psikolojik Karşılık</th><th>Puanlama Mantığı</th></tr></thead>
+                    <tbody>
+                        <tr><td>choiceId</td><td>Mikro-yönetim vs Delegasyon</td><td>Delege eden: +25 Liderlik Skoru</td></tr>
+                        <tr><td>readDuration</td><td>Son Karar Ağırlığı</td><td>Metrik karar süresi analizi</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="intro-box" style="margin-top: 60px; border-color: rgba(0, 243, 255, 0.3);">
+            <h2 style="font-family: 'Rajdhani', sans-serif; color: var(--neon-cyan); letter-spacing: 4px; margin-top: 0;">14. ANALİTİK GÖRSELLEŞTİRME MATRİSİ [FULL SYNC]</h2>
+            <p>Analiz motoru, <strong>13 bölümün tamamından</strong> gelen ham verileri 3 ana görsel katmanda işleyerek İK uzmanına sunar:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 4px;">
+                    <strong style="color: var(--neon-cyan);">RADAR: TAKIM DİNAMİĞİ</strong><br>
+                    <span style="font-size: 12px; color: #888;">
+                        • ETKİ: Liderlik ağırlığı (B10, B13)<br>
+                        • GÜVEN: Yetki devri & Affetme Gecikmesi (B12, B13)<br>
+                        • İNİSİYATİF: İlk tıklama ve reaksiyon hızı (B1, B8)<br>
+                        • GERİ BİLDİRİM: Müzakere adımları & Öz-eleştiri (B9, B11)
+                    </span>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 4px;">
+                    <strong style="color: var(--neon-cyan);">KADRAN: KRİZ YÖNETİMİ</strong><br>
+                    <span style="font-size: 12px; color: #888;">
+                        • SÜKUNET: Panik tık, hata oranı ve refleks (B5, B6, B8).<br>
+                        • TOPARLANMA: Hata sonrası aksiyon hızı (B1, B3, B7, B12).
+                    </span>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 4px;">
+                    <strong style="color: var(--neon-cyan);">BAR: VERİMLİLİK (FLOW)</strong><br>
+                    <span style="font-size: 12px; color: #888;">
+                        • ODAK: Filtreleme ve analiz süreleri (B1, B3, B5).<br>
+                        • STRATEJİ: Karar-Hedef uyumu (B2, B4, B7).<br>
+                        • AKIŞ: Karar-Eylem senkronizasyonu (B2, B8, B10).
+                    </span>
+                </div>
+            </div>
+            <p style="font-size: 11px; color: #666; margin-top: 20px; font-style: italic;">* Tüm hesaplamalar AssessmentEngine.dart üzerinden milisaniye hassasiyetinde yapılmaktadır. Kayıt dışı kalan veri yoktur.</p>
+        </div>
+
+        <div class="footer">
+            Bu kılavuz, Horizon Protocol v3.1 klinik değerlendirme standartlarına uygun olarak tasarlanmıştır. Tüm hakları saklıdır. &copy; 2026
+        </div>
+    </div>
+</body>
+</html>

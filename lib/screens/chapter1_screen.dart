@@ -29,6 +29,7 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
   late String _correctAnswer;
   late List<String> _options;
   int _errorCount = 0;
+  int? _timeToFirstClick;
   bool _isCompleted = false;
 
   final String _fullNarrative = "\"Göz kapakların yapışmış. Sinirsel sinapslarını yeniden hizalaman gerekiyor. Aşağıdaki alfanümerik dizinin son halkasını bul. Hata payı yoktur.\"";
@@ -77,6 +78,7 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
       } else {
         timer.cancel();
         setState(() { _isTypingNarrative = false; _statusText = "SİSTEM HAZIR. DEŞİFRE İÇİN BEKLENİYOR."; });
+        PersonaMR().startChapterTimer("Bölüm 1: Soğuk Uyanış");
         _stopwatch.start();
         _startHeartbeat();
         _uiUpdateTimer = Timer.periodic(const Duration(milliseconds: 100), (t) => setState(() {}));
@@ -111,6 +113,8 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
 
   void _onOptionTap(String value) {
     if (_isCompleted || _isTypingNarrative) return;
+    _timeToFirstClick ??= _stopwatch.elapsedMilliseconds;
+    PersonaMR().recordInteraction("Bölüm 1: Soğuk Uyanış", "OPTION_CLICKED", metadata: {"value": value, "correct": value == _correctAnswer});
     if (value == _correctAnswer) {
       AudioService().playTypingBeep();
       setState(() { _isCompleted = true; _statusText = "SİNAPTİK BAĞLANTI KURULDU."; _stopwatch.stop(); _completeChapter(); });
@@ -134,6 +138,10 @@ class _Chapter1ScreenState extends State<Chapter1Screen> with TickerProviderStat
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 1: Soğuk Uyanış",
       totalTimeMs: decisionTime,
+      additionalData: {
+        "timeToFirstClick": _timeToFirstClick ?? decisionTime,
+        "errorCount": _errorCount,
+      },
     );
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChapterBreatherScreen(

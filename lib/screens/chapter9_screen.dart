@@ -37,6 +37,7 @@ class _Chapter9ScreenState extends State<Chapter9Screen> with TickerProviderStat
     super.initState();
     _decisionStopwatch = Stopwatch()..start();
     _floatController = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat(reverse: true);
+    PersonaMR().startChapterTimer("Bölüm 9: Enkazın Ardından");
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AudioService().playMelancholicAmbient();
@@ -45,6 +46,7 @@ class _Chapter9ScreenState extends State<Chapter9Screen> with TickerProviderStat
 
   void _handleChoice(Map<String, dynamic> answer) {
     if (_isFinished) return;
+    PersonaMR().recordInteraction("Bölüm 9: Enkazın Ardından", "REFLECTION_CHOICE", metadata: {"text": answer["text"], "type": answer["type"]});
     setState(() => _isFinished = true);
     
     _decisionStopwatch.stop();
@@ -64,6 +66,9 @@ class _Chapter9ScreenState extends State<Chapter9Screen> with TickerProviderStat
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 9: Enkazın Ardından",
       totalTimeMs: totalTime,
+      additionalData: {
+        "responseDelay": totalTime, // Time until they picked their reflection
+      },
     );
 
     PersonaMR().logDecision(

@@ -41,6 +41,7 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
     _stopwatch = Stopwatch()..start(); // Initialize new stopwatch
     // _startTimer(); // Call to a new timer method, if implemented
     _decisionStopwatch = Stopwatch()..start();
+    PersonaMR().startChapterTimer("Bölüm 4: Karanlık Koridorlar");
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat(reverse: true);
     _startTypewriter();
     _startGlitchEffects();
@@ -128,6 +129,7 @@ class _Chapter4ScreenState extends State<Chapter4Screen> with SingleTickerProvid
       _isTransitioning = true;
       _showBlackout = true;
     });
+    PersonaMR().recordInteraction("Bölüm 4: Karanlık Koridorlar", "CHOICE_MADE", metadata: {"area": area.name});
 
     // decision sounds
     AudioService().playMetalClunk();

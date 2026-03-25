@@ -4,6 +4,8 @@ import 'package:horizon_protocol/core/app_theme.dart';
 import 'package:horizon_protocol/services/audio_service.dart';
 import 'package:horizon_protocol/services/persona_mr.dart';
 import 'package:horizon_protocol/screens/intro_screen.dart';
+import 'package:horizon_protocol/screens/admin_dashboard_screen.dart';
+import 'package:horizon_protocol/utils/string_extensions.dart';
 
 class UserEntryScreen extends StatefulWidget {
   const UserEntryScreen({super.key});
@@ -67,6 +69,58 @@ class _UserEntryScreenState extends State<UserEntryScreen> with TickerProviderSt
     });
   }
 
+  void _showAdminLoginDialog() {
+    final TextEditingController pinController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(side: BorderSide(color: AppTheme.neonCyan)),
+        title: Text("ADMIN YETKİLENDİRMESİ", style: GoogleFonts.rajdhani(color: AppTheme.neonCyan, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("LÜTFEN ERİŞİM KODUNU GİRİNİZ", style: GoogleFonts.sourceCodePro(color: Colors.white38, fontSize: 10)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: pinController,
+              obscureText: true,
+              style: GoogleFonts.sourceCodePro(color: Colors.white),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppTheme.neonCyan)),
+                hintText: "PIN",
+                hintStyle: GoogleFonts.sourceCodePro(color: Colors.white10),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("İPTAL", style: GoogleFonts.rajdhani(color: Colors.white38)),
+          ),
+          TextButton(
+            onPressed: () {
+              if (pinController.text == "1234") {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboardScreen()));
+              } else {
+                AudioService().playStaticBurst();
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("YETKİSİZ ERİŞİM: HATALI PIN", style: GoogleFonts.sourceCodePro())),
+                );
+              }
+            },
+            child: Text("GİRİŞ", style: GoogleFonts.rajdhani(color: AppTheme.neonCyan, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +153,33 @@ class _UserEntryScreenState extends State<UserEntryScreen> with TickerProviderSt
 
                     // START BUTTON
                     _buildStartButton(),
+                    const SizedBox(height: 40),
+
+                    // ADMIN ACCESS (DISCREET)
+                    Opacity(
+                      opacity: 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: _showAdminLoginDialog,
+                            child: Text(
+                              "// GİZLİ ANALİZ PANELİ //",
+                              style: GoogleFonts.sourceCodePro(color: Colors.white, fontSize: 9, letterSpacing: 2),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextButton(
+                            onPressed: _showClinicalAssessmentLoginDialog,
+                            child: Text(
+                              "// KLİNİK DEĞERLENDİRME VERİLERİ //",
+                              style: GoogleFonts.sourceCodePro(color: AppTheme.neonCyan, fontSize: 9, letterSpacing: 2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
@@ -110,6 +191,321 @@ class _UserEntryScreenState extends State<UserEntryScreen> with TickerProviderSt
       ),
     );
   }
+
+  void _showClinicalAssessmentLoginDialog() {
+    final TextEditingController pinController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(side: BorderSide(color: AppTheme.neonCyan)),
+        title: Text("KLİNİK VERİ ERİŞİMİ", style: GoogleFonts.rajdhani(color: AppTheme.neonCyan, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("LÜTFEN YETKİLİ ERİŞİM KODUNU GİRİNİZ", style: GoogleFonts.sourceCodePro(color: Colors.white38, fontSize: 10)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: pinController,
+              obscureText: true,
+              style: GoogleFonts.sourceCodePro(color: Colors.white),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppTheme.neonCyan)),
+                hintText: "PIN",
+                hintStyle: GoogleFonts.sourceCodePro(color: Colors.white10),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("İPTAL", style: GoogleFonts.rajdhani(color: Colors.white38)),
+          ),
+          TextButton(
+            onPressed: () {
+              if (pinController.text == "1234") {
+                Navigator.pop(context);
+                _showClinicalPresentation();
+              } else {
+                AudioService().playStaticBurst();
+                Navigator.pop(context);
+              }
+            },
+            child: Text("DOĞRULA", style: GoogleFonts.rajdhani(color: AppTheme.neonCyan, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showClinicalPresentation() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(side: BorderSide(color: AppTheme.neonCyan.withOpacity(0.5))),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "KLİNİK DEĞERLENDİRME ANALİZİ",
+                      style: GoogleFonts.rajdhani(color: AppTheme.neonCyan, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2),
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white38),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const Divider(color: Colors.white10, height: 40),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _clinicalChapters.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 20),
+                    itemBuilder: (context, index) => _buildChapterCard(_clinicalChapters[index]),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChapterCard(Map<String, dynamic> ch) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.01),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "BÖLÜM ${ch['id']}: ${ch['title']}",
+                style: GoogleFonts.rajdhani(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: (ch['color'] as Color).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(color: (ch['color'] as Color).withOpacity(0.3)),
+                ),
+                child: Text(
+                  ch['iq_type'].toString().toTurkishUpperCase(),
+                  style: GoogleFonts.sourceCodePro(color: ch['color'], fontSize: 9, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          _buildDetailRow("Sahne", ch['scene']),
+          _buildDetailRow("Amaç", ch['purpose']),
+          _buildDetailRow("Mekanik", ch['mechanic']),
+          _buildDetailRow("Psikometrik", ch['psychometric']),
+          _buildDetailRow("Psikolojik Veri", ch['metrics']),
+          _buildDetailRow("Analiz Çıktısı", ch['outcome']),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 90,
+            child: Text(
+              "$label:",
+              style: GoogleFonts.sourceCodePro(color: Colors.white24, fontSize: 10),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.sourceCodePro(color: Colors.white70, fontSize: 11),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  final List<Map<String, dynamic>> _clinicalChapters = [
+    {
+      "id": "1",
+      "title": "Soğuk Uyanış",
+      "iq_type": "Akıcı Zeka",
+      "color": Colors.cyanAccent,
+      "scene": "Issız, karanlık uzay istasyonu koridoru ve sistem sesleri.",
+      "purpose": "Kriz anında bilişsel kaynakları aktive etme ve örüntü yakalama.",
+      "mechanic": "Alfanümerik Pattern Bulmaca",
+      "psychometric": "Kriz Yönetimi, Hızlı Adaptasyon, Sayısal Muhakeme.",
+      "metrics": "errorCount, durationMs, timeToFirstClick",
+      "outcome": "Bilişsel Sosyalizasyon & Örüntü Tanıma"
+    },
+    {
+      "id": "2",
+      "title": "Triage",
+      "iq_type": "Sistem Zekası",
+      "color": Colors.orangeAccent,
+      "scene": "Duman altındaki enerji kontrol odası, kısıtlı enerji kaynağı.",
+      "purpose": "Kurumsal bekâ ile insani empati arasındaki dengeyi ölçmek.",
+      "mechanic": "Kaynak Tahsisi Seçimi",
+      "psychometric": "Stratejik Karar Alma, Kurumsal Sadakat, Kaynak Yönetimi.",
+      "metrics": "choiceId, switch_count, focus_order, final_levels",
+      "outcome": "Stratejik Önceliklendirme"
+    },
+    {
+      "id": "3",
+      "title": "Parazitler",
+      "iq_type": "Seçici Dikkat",
+      "color": Colors.redAccent,
+      "scene": "Veri terminali ekranı ve aniden fırlayan parazit pencereler.",
+      "purpose": "Ana işe odaklanırken çevresel gürültüyü (noise) filtreleme.",
+      "mechanic": "Sembol Eşleştirme + Pop-up Noise",
+      "psychometric": "Odaklanma Kapasitesi, Hata Toleransı, Detay Dikkat.",
+      "metrics": "reactionTime, tile_flips, box_closing_strategy, symbolMatchErrors",
+      "outcome": "Çeldirici Zafiyeti & KPI: Minimum Süre"
+    },
+    {
+      "id": "4",
+      "title": "Kritik Yol",
+      "iq_type": "Etik Zeka",
+      "color": Colors.amberAccent,
+      "scene": "Karanlık asansör boşluğu veya robotik laboratuvar girişi.",
+      "purpose": "Zorlayıcı şartlarda felsefi/stratejik tutarlılık testi.",
+      "mechanic": "Fiziksel Yol Ayrımı (Bölüm 2 Uzantısı)",
+      "psychometric": "Karar Tutarlılığı, Öz-Disiplin ve Integrity.",
+      "metrics": "choiceConsistency",
+      "outcome": "Söylem-Eylem Tutarlılığı"
+    },
+    {
+      "id": "5",
+      "title": "Erişim",
+      "iq_type": "İşleyen Bellek",
+      "color": Colors.purpleAccent,
+      "scene": "Kırmızı geri sayım barı eşliğinde kilitli kapı terminali.",
+      "purpose": "Zaman kısıtı altında metin analiz hızı ve şifre çözümü.",
+      "mechanic": "Kısıtlı Sürede Metin Analizi",
+      "psychometric": "Zaman Yönetimi, Analitik Taramacılık, Bilişsel Yük.",
+      "metrics": "failedAttempts, readingTime, durationMs",
+      "outcome": "Baskı Altında Bilgi İşleme"
+    },
+    {
+      "id": "6",
+      "title": "Kaos",
+      "iq_type": "Duygu Düzenleme",
+      "color": Colors.deepOrangeAccent,
+      "scene": "Siren sesleri, ekran titremesi ve sahte hata mesajları.",
+      "purpose": "Kaosun ortasında en rasyonel ve basit adımı bulabilme.",
+      "mechanic": "Sahte Alarmlar & UI Gürültüsü",
+      "psychometric": "Duygusal Dayanıklılık (Resilience), Panik Yönetimi.",
+      "metrics": "panic_clicks, mutingSpeed",
+      "outcome": "Stres Altında Soğukkanlılık"
+    },
+    {
+      "id": "7",
+      "title": "Binary Code",
+      "iq_type": "Pratik Zeka",
+      "color": Colors.blueAccent,
+      "scene": "Donmuş ekran üzerinde akan 0 ve 1 veri şeridi.",
+      "purpose": "Dış kaynakları kullanarak hızlı araştırma, öğrenme ve uygulama.",
+      "mechanic": "Harici Kaynaklardan Şifre Çözümü",
+      "psychometric": "Öğrenme Çevikliği (Learning Agility), Araştırmacılık.",
+      "metrics": "durationMs, errorCount",
+      "outcome": "Kaynak Kullanımı (Süre 2. plandadır)"
+    },
+    {
+      "id": "8",
+      "title": "Sızıntı",
+      "iq_type": "Yürütücü İşlevler",
+      "color": Colors.lightBlueAccent,
+      "scene": "Basıncın düştüğü ve hava sızıntısı olan geçit koridoru.",
+      "purpose": "Can güvenliği riski anında prosedürlere sadakat ölçümü.",
+      "mechanic": "Protokol vs İnsani Yardım",
+      "psychometric": "Prosedür Uyumu, Öz-Koruma vs. Risk Alma.",
+      "metrics": "choiceId, reactionTime",
+      "outcome": "Baskı Altında Protokol Sadakati"
+    },
+    {
+      "id": "9",
+      "title": "Enkaz",
+      "iq_type": "İçsel Zeka",
+      "color": Colors.tealAccent,
+      "scene": "Hasarın raporlanması gereken sessiz ve teknik terminal odası.",
+      "purpose": "Hatanın sorumluluğunu kime/neye atadığını saptamak.",
+      "mechanic": "Kriz Sonrası Raporlama",
+      "psychometric": "Hesap Verebilirlik (Accountability), Özyeterlilik.",
+      "metrics": "choiceId",
+      "outcome": "Öz-Farkındalık & Sorumluluk"
+    },
+    {
+      "id": "10-11",
+      "title": "Tartışma",
+      "iq_type": "Sosyal Zeka",
+      "color": Colors.greenAccent,
+      "scene": "Dönüş yolunda kokpitteki AI modülleri çatışması.",
+      "purpose": "Çatışma anında otoriterleşme vs. uzlaşı arama eğilimi.",
+      "mechanic": "IA vs Empati Seçimi",
+      "psychometric": "Müzakere Becerileri, Takım Yönetimi, Demokratik Liderlik.",
+      "metrics": "choiceId, negotiationSteps, finalAgreement",
+      "outcome": "Çatışma Çözümü & Liderlik Stili"
+    },
+    {
+      "id": "12",
+      "title": "Müdahale",
+      "iq_type": "Kişilerarası IQ",
+      "color": Colors.pinkAccent,
+      "scene": "Partner modülün kritik hata yaptığı dijital arayüz.",
+      "purpose": "Partner hatasına karşı cezalandırıcı vs. geliştirici tepki.",
+      "mechanic": "Partner Hatası Yönetimi",
+      "psychometric": "Psikolojik Güvenlik, Mentorluk, Delegasyon Etiği.",
+      "metrics": "choiceId, forgiveDelay, selection",
+      "outcome": "Psikolojik Güvenlik İnşası"
+    },
+    {
+      "id": "13",
+      "title": "Final",
+      "iq_type": "Organizasyonel Zeka",
+      "color": Colors.indigoAccent,
+      "scene": "Sistemlerin finalize edildiği görkemli final ekranı.",
+      "purpose": "Tüm kontrolü elde tutma vs. delege ederek yetkilendirme.",
+      "mechanic": "Görev Devri (Self vs Delegate)",
+      "psychometric": "Güven İnşası, Stratejik Yetkilendirme.",
+      "metrics": "choiceId, readDuration, delegationRatio, finalDecision",
+      "outcome": "Delegasyon & Yetkilendirme"
+    },
+  ];
 
   Widget _buildHeader() {
     return Column(
@@ -148,6 +544,11 @@ class _UserEntryScreenState extends State<UserEntryScreen> with TickerProviderSt
           width: 200,
           height: 1,
           color: AppTheme.neonCyan.withOpacity(0.2),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          "KPI NOTU: BÖLÜM 1, 3, 5 İÇİN MİNİMUM SÜRE KRİTİKTİR. BÖLÜM 7'DE SEÇİM KALİTESİ ÖNCELİKLİDİR.",
+          style: GoogleFonts.sourceCodePro(color: Colors.amberAccent.withOpacity(0.4), fontSize: 8, fontWeight: FontWeight.bold),
         ),
       ],
     );

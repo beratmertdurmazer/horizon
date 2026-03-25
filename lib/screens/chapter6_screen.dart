@@ -24,12 +24,15 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
   late AnimationController _floatingAlarmsController;
   final List<Offset> _alarmPositions = List.generate(5, (_) => Offset(math.Random().nextDouble() * 200, math.Random().nextDouble() * 400));
   
+  // V2 Telemetry
+  int _panicClicks = 0;
   @override
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200))..repeat(reverse: true);
     _floatingAlarmsController = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
+    PersonaMR().startChapterTimer("Bölüm 6: Alarm Yorgunluğu");
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AudioService().playUrgentSiren();
@@ -42,6 +45,7 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
       _isTransitioning = true;
       _alarmsMuted = mute;
     });
+    PersonaMR().recordInteraction("Bölüm 6: Alarm Yorgunluğu", mute ? "ALARMS_MUTED" : "KAOS_ACCEPTED");
 
     if (mute) {
       AudioService().stopSiren();
@@ -49,18 +53,24 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
     }
 
     final totalTime = _stopwatch.elapsedMilliseconds;
+    List<String> triggers = [];
+    if (_panicClicks > 4) triggers.add("panic_clicks");
 
     PersonaMR().logDecision(
       moduleId: "MOD_2",
       chapterId: "Bölüm 6: Alarm Yorgunluğu",
-      choiceId: mute ? "MUTE_ALARMS_COMFORT" : "KEEP_ALARMS_VIGILANCE", // Reverted to original logic for choiceId
+      choiceId: mute ? "MUTE_ALARMS_COMFORT" : "KEEP_ALARMS_VIGILANCE", 
       durationMs: totalTime,
-      triggers: ["noise_stress_level_high"], // Reverted to original logic for triggers
+      triggers: triggers,
     );
 
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 6: Alarm Yorgunluğu",
       totalTimeMs: totalTime,
+      additionalData: {
+        "mutingSpeed": mute ? totalTime : 0,
+        "panic_clicks": _panicClicks,
+      },
     );
 
     Future.delayed(const Duration(seconds: 3), () {
@@ -182,10 +192,17 @@ class _Chapter6ScreenState extends State<Chapter6Screen> with TickerProviderStat
             top: y.clamp(50.0, size.height - 100),
             child: Opacity(
               opacity: 0.3 + 0.7 * _flickerController.value,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
-                child: Text("! CRITICAL ERROR", style: GoogleFonts.sourceCodePro(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+              child: GestureDetector(
+                onTap: () {
+                  // V2 Telemetry: Kaotik nesneye gereksiz müdahale refleksti (Panik)
+                  _panicClicks++;
+                  PersonaMR().recordInteraction("Bölüm 6: Alarm Yorgunluğu", "PANIC_CLICK", metadata: {"count": _panicClicks});
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
+                  child: Text("! CRITICAL ERROR", style: GoogleFonts.sourceCodePro(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                ),
               ),
             ),
           );

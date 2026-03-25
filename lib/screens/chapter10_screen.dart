@@ -32,6 +32,7 @@ class _Chapter10ScreenState extends State<Chapter10Screen> with TickerProviderSt
     super.initState();
     _stopwatch = Stopwatch()..start();
     _frostController = AnimationController(vsync: this, duration: const Duration(seconds: 5))..repeat(reverse: true);
+    PersonaMR().startChapterTimer("Bölüm 10: Buzdan Çıkan Yüz");
     _startTypewriter();
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -69,6 +70,7 @@ class _Chapter10ScreenState extends State<Chapter10Screen> with TickerProviderSt
       _selectedCharacter = name;
       _isTransitioning = true;
     });
+    PersonaMR().recordInteraction("Bölüm 10: Buzdan Çıkan Yüz", "CHARACTER_SELECTED", metadata: {"name": name});
 
     PersonaMR().setPartner(name); // Store for Chapter 11
     AudioService().playFrostCrack();

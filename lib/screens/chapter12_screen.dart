@@ -24,6 +24,7 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
   late String _dialogue;
   String _displayedDialogue = "";
   int _charIndex = 0;
+  int? _dialogueFinishTime;
   Timer? _typewriterTimer;
 
   late AnimationController _fireController;
@@ -32,6 +33,7 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
+    PersonaMR().startChapterTimer("Bölüm 12: Partnerin Hatası");
     _partnerName = PersonaMR().getPartner() ?? "ELARA";
     _partnerImagePath = _partnerName == "KAEL" ? "assets/images/char_kael.png" : "assets/images/char_elara.png";
     
@@ -59,6 +61,7 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
         }
       } else {
         timer.cancel();
+        _dialogueFinishTime = _stopwatch.elapsedMilliseconds;
       }
     });
   }
@@ -75,6 +78,7 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
     if (_isTransitioning) return;
 
     setState(() => _isTransitioning = true);
+    PersonaMR().recordInteraction("Bölüm 12: Partnerin Hatası", "HANDLED_MISTAKE", metadata: {"punitive": punitive});
     AudioService().playMetalClunk();
 
     final totalTime = _stopwatch.elapsedMilliseconds;
@@ -90,6 +94,10 @@ class _Chapter12ScreenState extends State<Chapter12Screen> with TickerProviderSt
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 12: Partnerin Hatası",
       totalTimeMs: totalTime,
+      additionalData: {
+        "forgiveDelay": (totalTime - (_dialogueFinishTime ?? totalTime)).clamp(0, totalTime),
+        "selection": punitive ? "punish" : "forgive",
+      },
     );
 
     Future.delayed(const Duration(seconds: 3), () {

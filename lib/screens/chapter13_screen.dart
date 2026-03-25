@@ -23,12 +23,14 @@ class _Chapter13ScreenState extends State<Chapter13Screen> {
   late String _dialogue;
   String _displayedDialogue = "";
   int _charIndex = 0;
+  int? _dialogueFinishTime;
   Timer? _typewriterTimer;
 
   @override
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
+    PersonaMR().startChapterTimer("Bölüm 13: Güven Testi");
     _partnerName = PersonaMR().getPartner() ?? "ELARA";
     _partnerImagePath = _partnerName == "KAEL" ? "assets/images/char_kael.png" : "assets/images/char_elara.png";
     
@@ -54,6 +56,7 @@ class _Chapter13ScreenState extends State<Chapter13Screen> {
         }
       } else {
         timer.cancel();
+        _dialogueFinishTime = _stopwatch.elapsedMilliseconds;
       }
     });
   }
@@ -69,6 +72,7 @@ class _Chapter13ScreenState extends State<Chapter13Screen> {
     if (_isTransitioning) return;
 
     setState(() => _isTransitioning = true);
+    PersonaMR().recordInteraction("Bölüm 13: Güven Testi", "FINAL_DECISION", metadata: {"delegate": delegate});
     AudioService().playMetalClunk();
 
     final totalTime = _stopwatch.elapsedMilliseconds;
@@ -86,6 +90,11 @@ class _Chapter13ScreenState extends State<Chapter13Screen> {
       await PersonaMR().logChapterMetrics(
         chapterId: "Bölüm 13: Güven Testi",
         totalTimeMs: totalTime,
+        additionalData: {
+          "delegationRatio": delegate ? 1.0 : 0.0,
+          "finalDecision": delegate ? "delegate" : "self",
+          "readDuration": (totalTime - (_dialogueFinishTime ?? totalTime)).clamp(0, totalTime),
+        },
       );
 
       await PersonaMR().finalizeCandidateSession();

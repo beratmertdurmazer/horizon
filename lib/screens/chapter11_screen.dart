@@ -31,6 +31,7 @@ class _Chapter11ScreenState extends State<Chapter11Screen> with TickerProviderSt
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
+    PersonaMR().startChapterTimer("Bölüm 11: İlk Tartışma");
     _partnerName = PersonaMR().getPartner() ?? "ELARA";
     _partnerImagePath = _partnerName == "KAEL" ? "assets/images/char_kael.png" : "assets/images/char_elara.png";
     
@@ -82,6 +83,7 @@ class _Chapter11ScreenState extends State<Chapter11Screen> with TickerProviderSt
     if (_isTransitioning) return;
 
     setState(() => _isTransitioning = true);
+    PersonaMR().recordInteraction("Bölüm 11: İlk Tartışma", "DIALOGUE_CHOICE", metadata: {"collaborative": collaborative});
     AudioService().playMetalClunk();
 
     final totalTime = _stopwatch.elapsedMilliseconds;
@@ -98,6 +100,10 @@ class _Chapter11ScreenState extends State<Chapter11Screen> with TickerProviderSt
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 11: İlk Tartışma",
       totalTimeMs: totalTime,
+      additionalData: {
+        "negotiationSteps": 1, // Currently a single-step decision in UI
+        "finalAgreement": collaborative ? 1 : 0,
+      },
     );
 
     Future.delayed(const Duration(seconds: 3), () {

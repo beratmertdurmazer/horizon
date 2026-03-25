@@ -29,6 +29,10 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
   TriageSystem _focusedSystem = TriageSystem.none;
   bool _isCompleted = false;
   
+  // Granüler Telemetri
+  final List<String> _focusOrder = [];
+  int _switchCount = 0;
+  
   // Geri Sayım Süresi (20 Saniye)
   double _timeLeft = 20.0;
   Timer? _tickTimer;
@@ -57,6 +61,7 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
 
     _startTicking();
     _startHeartbeat();
+    PersonaMR().startChapterTimer("Bölüm 2: Triage");
   }
 
   void _startTicking() {
@@ -129,7 +134,39 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
     if (_isCompleted) return;
     AudioService().playTypingBeep();
     _firstPriority ??= system;
+    
+    // Telemetri Kaydı
+    _switchCount++;
+    _focusOrder.add(system.name);
+    
+    PersonaMR().recordInteraction("Bölüm 2: Triage", "FOCUS_STARTED", metadata: {
+      "system": system.name,
+      "reactor": (_reactorHealth * 100).toInt(),
+      "oxygen": (_oxygenLevel * 100).toInt(),
+      "comms": (_commsSignal * 100).toInt(),
+    });
     setState(() => _focusedSystem = system);
+  }
+
+  void _releaseFocus(TriageSystem system) {
+    if (_focusedSystem != system) return;
+    double value = 0;
+    switch(system) {
+      case TriageSystem.reactor: value = _reactorHealth; break;
+      case TriageSystem.oxygen: value = _oxygenLevel; break;
+      case TriageSystem.comms: value = _commsSignal; break;
+      default: break;
+    }
+    PersonaMR().recordInteraction("Bölüm 2: Triage", "FOCUS_ENDED", metadata: {
+      "system": system.name, 
+      "level": (value * 100).toInt(),
+      "final_levels": {
+        "reactor": (_reactorHealth * 100).toInt(),
+        "oxygen": (_oxygenLevel * 100).toInt(),
+        "comms": (_commsSignal * 100).toInt(),
+      }
+    });
+    setState(() => _focusedSystem = TriageSystem.none);
   }
 
   void _completeTriage() {
@@ -164,6 +201,16 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 2: Triage",
       totalTimeMs: decisionTime,
+      additionalData: {
+        "first_priority": _firstPriority?.name,
+        "switch_count": _switchCount,
+        "focus_order": _focusOrder,
+        "final_levels": {
+          "reactor": (_reactorHealth * 100).toInt(),
+          "oxygen": (_oxygenLevel * 100).toInt(),
+          "comms": (_commsSignal * 100).toInt(),
+        }
+      }
     );
 
     Future.delayed(const Duration(seconds: 2), () {
@@ -262,8 +309,8 @@ class _Chapter2ScreenState extends State<Chapter2Screen> with TickerProviderStat
     bool isFocused = _focusedSystem == system;
     return GestureDetector(
       onTapDown: (_) => _setFocus(system),
-      onTapUp: (_) => setState(() => _focusedSystem = TriageSystem.none),
-      onTapCancel: () => setState(() => _focusedSystem = TriageSystem.none),
+      onTapUp: (_) => _releaseFocus(system),
+      onTapCancel: () => _releaseFocus(system),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200), padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(color: isFocused ? color.withOpacity(0.15) : Colors.black.withOpacity(0.4), border: Border.all(color: isFocused ? color : color.withOpacity(0.3), width: isFocused ? 2 : 1), borderRadius: BorderRadius.circular(8), boxShadow: isFocused ? [BoxShadow(color: color.withOpacity(0.2), blurRadius: 10, spreadRadius: 1)] : []),

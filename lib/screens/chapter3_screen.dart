@@ -29,17 +29,24 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
   Timer? _uiTimer;
   late Stopwatch _stopwatch;
   bool _isCompleted = false;
-  bool _isTransitioning = false; // Added this line
+  bool _isTransitioning = false;
 
-  // PersonaMR
+  // Telemetry Variables (V2 Assessment)
   int _distractionClicks = 0;
   int _gameClicks = 0;
+  final Map<Key, DateTime> _popupSpawnTimes = {};
+  int _immediateDismissals = 0;
+  int _readingParalysisCount = 0;
+  int _spamClicks = 0;
+  int _matchErrors = 0;
+  DateTime? _lastTileClickTime;
 
   @override
   void initState() {
     super.initState();
     _stopwatch = Stopwatch()..start();
     _setupGame();
+    PersonaMR().startChapterTimer("Bölüm 3: Parazitler");
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startPopupRain();
       _uiTimer = Timer.periodic(const Duration(milliseconds: 100), (t) => setState(() {}));
@@ -69,6 +76,8 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
     final left = 20.0 + random.nextDouble() * (MediaQuery.of(context).size.width - 250);
 
     final key = UniqueKey();
+    _popupSpawnTimes[key] = DateTime.now(); // Record exact spawn time
+
     setState(() {
       _popups.add(
         Positioned(
@@ -78,7 +87,8 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
           child: _buildDistractionPopup(type, key),
         ),
       );
-      AudioService().playGlitchSound(); // Notif sesi niyetine
+      PersonaMR().recordInteraction("Bölüm 3: Parazitler", "POPUP_SPAWNED", metadata: {"type": type});
+      AudioService().playGlitchSound();
     });
   }
 
@@ -107,6 +117,14 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
 
     return GestureDetector(
       onTap: () {
+        // V2 Telemetry Analizi
+        if (_popupSpawnTimes.containsKey(key)) {
+          int reactionTime = DateTime.now().difference(_popupSpawnTimes[key]!).inMilliseconds;
+          if (reactionTime < 500) _immediateDismissals++; // Dürtüsel yangın söndürme
+          if (reactionTime > 3000) _readingParalysisCount++; // Odak erozyonu / Okuya dalma
+          PersonaMR().recordInteraction("Bölüm 3: Parazitler", "POPUP_CLOSED", metadata: {"reactionTime": reactionTime});
+        }
+
         setState(() => _distractionClicks++);
         _removePopup(key);
       },
@@ -159,11 +177,19 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
   void _onTileTap(int index) {
     if (_isCompleted || _isProcessing || _isRevealed[index] || _isMatched[index]) return;
 
+    // V2 Telemetry (Spam Clik / Panic Click Detection)
+    DateTime now = DateTime.now();
+    if (_lastTileClickTime != null && now.difference(_lastTileClickTime!).inMilliseconds < 300) {
+      _spamClicks++; // Panik halinde çoklu ve hızlı tıklama tespit edildi
+    }
+    _lastTileClickTime = now;
+
     _gameClicks++;
     setState(() {
       _isRevealed[index] = true;
       AudioService().playTypingBeep();
     });
+    PersonaMR().recordInteraction("Bölüm 3: Parazitler", "TILE_FLIPPED", metadata: {"index": index, "symbol": _symbols[index]});
 
     if (_firstSelectedIndex == null) {
       _firstSelectedIndex = index;
@@ -174,11 +200,14 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
         _matchesFound++;
         _isMatched[_firstSelectedIndex!] = true;
         _isMatched[index] = true;
+        PersonaMR().recordInteraction("Bölüm 3: Parazitler", "MATCH_FOUND", metadata: {"symbol": _symbols[index]});
         _firstSelectedIndex = null;
         _isProcessing = false;
         if (_matchesFound == 8) _completeChapter();
       } else {
         // NO MATCH
+        _matchErrors++;
+        PersonaMR().recordInteraction("Bölüm 3: Parazitler", "MATCH_FAIL", metadata: {"s1": _symbols[_firstSelectedIndex!], "s2": _symbols[index]});
         Timer(const Duration(milliseconds: 600), () {
           setState(() {
             _isRevealed[_firstSelectedIndex!] = false;
@@ -195,22 +224,32 @@ class _Chapter3ScreenState extends State<Chapter3Screen> with TickerProviderStat
     _isCompleted = true;
     _stopwatch.stop();
     final decisionTime = _stopwatch.elapsedMilliseconds;
+    List<String> collectedTriggers = [
+      "distraction_clicks_$_distractionClicks",
+      "game_clicks_$_gameClicks",
+      "focus_ratio_${_gameClicks / (_gameClicks + _distractionClicks + 1)}"
+    ];
+
+    // V2 Psikolojik Sinyaller (AssessmentEngine'e gönderilir)
+    if (_immediateDismissals > 2) collectedTriggers.add("immediate_dismissal");
+    if (_readingParalysisCount > 1) collectedTriggers.add("reading_paralysis");
+    if (_spamClicks > 3) collectedTriggers.add("spam_clicks");
 
     PersonaMR().logDecision(
       moduleId: "MOD_1",
       chapterId: "Bölüm 3: Parazitler",
-      choiceId: "MATCHING_COMPLETE", // Assuming this is the choiceId for completion
+      choiceId: "MATCHING_COMPLETE", 
       durationMs: decisionTime,
-      triggers: [
-        "distraction_clicks_$_distractionClicks",
-        "game_clicks_$_gameClicks",
-        "focus_ratio_${_gameClicks / (_gameClicks + _distractionClicks + 1)}"
-      ],
+      triggers: collectedTriggers,
     );
 
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 3: Parazitler",
       totalTimeMs: decisionTime,
+      additionalData: {
+        "missedPopups": _popups.length,
+        "symbolMatchErrors": _matchErrors,
+      },
     );
 
     Future.delayed(const Duration(seconds: 2), () {

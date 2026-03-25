@@ -23,6 +23,8 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
   Timer? _countdownTimer;
   Timer? _heartbeatTimer;
   int _secondsRemaining = 20;
+  int _failedAttempts = 0;
+  int? _readingTime;
   bool _isFinished = false;
   final TextEditingController _pinController = TextEditingController();
   late AnimationController _flickerController;
@@ -35,6 +37,7 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
     _stopwatch = Stopwatch()..start();
     _flickerController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400))..repeat(reverse: true);
     _startCountdown();
+    PersonaMR().startChapterTimer("Bölüm 5: Reaktör Krizi");
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AudioService().playAmbientLoop();
@@ -71,8 +74,11 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
 
   void _handlePinSubmit() {
     if (_pinController.text.trim().toUpperCase() == "HORIZON_OMEGA") {
+      PersonaMR().recordInteraction("Bölüm 5: Reaktör Krizi", "PIN_SUCCESS");
       _endChapter("SUCCESS_PIN_SOLVED");
     } else {
+      _failedAttempts++;
+      PersonaMR().recordInteraction("Bölüm 5: Reaktör Krizi", "PIN_ERROR", metadata: {"input": _pinController.text});
       AudioService().playGlitchSound();
       _pinController.clear();
       // Visual feedback for wrong PIN could go here
@@ -80,6 +86,7 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
   }
 
   void _handleBypass() {
+    PersonaMR().recordInteraction("Bölüm 5: Reaktör Krizi", "BYPASS_CLICKED");
     _endChapter("SUCCESS_BYPASS_PANIC");
   }
 
@@ -105,6 +112,10 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
     PersonaMR().logChapterMetrics(
       chapterId: "Bölüm 5: Reaktör Krizi",
       totalTimeMs: decisionTime,
+      additionalData: {
+        "failedAttempts": _failedAttempts,
+        "readingTime": _readingTime ?? decisionTime,
+      },
     );
 
     // Final result screen or next module logic
@@ -335,6 +346,11 @@ class _Chapter5ScreenState extends State<Chapter5Screen> with SingleTickerProvid
               border: InputBorder.none,
             ),
             onSubmitted: (_) => _handlePinSubmit(),
+            onChanged: (val) {
+              if (_readingTime == null && val.isNotEmpty) {
+                _readingTime = _stopwatch.elapsedMilliseconds;
+              }
+            },
           ),
         ),
         const SizedBox(height: 12),
